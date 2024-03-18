@@ -24,7 +24,7 @@ TODO: Add long description of the pod here.
   s.homepage         = 'https://github.com/fangdada1/MamoGiftCustom'
   # s.screenshots     = 'www.example.com/screenshots_1', 'www.example.com/screenshots_2'
   s.license          = { :type => 'MIT', :file => 'LICENSE' }
-  s.author           = { 'fangdada1' => 'fangbowen@fuya.live' }
+  s.author           = { 'fangdada1' => '120435977+fangdada1@users.noreply.github.com' }
   s.source           = { :git => 'https://github.com/fangdada1/MamoGiftCustom.git', :tag => s.version.to_s }
   # s.social_media_url = 'https://twitter.com/<TWITTER_USERNAME>'
 
