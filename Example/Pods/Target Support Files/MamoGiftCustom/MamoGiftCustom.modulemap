@@ -1,0 +1,6 @@
+framework module MamoGiftCustom {
+  umbrella header "MamoGiftCustom-umbrella.h"
+
+  export *
+  module * { export * }
+}

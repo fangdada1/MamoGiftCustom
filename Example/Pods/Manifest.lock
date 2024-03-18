@@ -1,0 +1,16 @@
+PODS:
+  - MamoGiftCustom (0.1.0)
+
+DEPENDENCIES:
+  - MamoGiftCustom (from `../`)
+
+EXTERNAL SOURCES:
+  MamoGiftCustom:
+    :path: "../"
+
+SPEC CHECKSUMS:
+  MamoGiftCustom: fb37f59c0b9c8a41a22cb5433208d8ce9e8dbe5d
+
+PODFILE CHECKSUM: 7306abc82af54f192ad2242e3d08af061bb54f53
+
+COCOAPODS: 1.14.3

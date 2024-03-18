@@ -1,0 +1,22 @@
+{
+  "name": "MamoGiftCustom",
+  "version": "0.1.0",
+  "summary": "A short description of MamoGiftCustom.",
+  "description": "TODO: Add long description of the pod here.",
+  "homepage": "https://github.com/fangdada1/MamoGiftCustom",
+  "license": {
+    "type": "MIT",
+    "file": "LICENSE"
+  },
+  "authors": {
+    "fangdada1": "fangbowen@fuya.live"
+  },
+  "source": {
+    "git": "https://github.com/fangdada1/MamoGiftCustom.git",
+    "tag": "0.1.0"
+  },
+  "platforms": {
+    "ios": "10.0"
+  },
+  "source_files": "MamoGiftCustom/Classes/**/*"
+}
