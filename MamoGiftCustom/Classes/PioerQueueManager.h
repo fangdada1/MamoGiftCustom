@@ -17,12 +17,16 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic,strong) UIView *parentView;
 @property (nonatomic,strong) PioerQueueGiftData *model;
-@property (nonatomic,retain) NSMutableArray *giftArray;
+//@property (nonatomic,retain) NSMutableArray *giftArray;
 
 /// 队列1
 @property (nonatomic,strong) NSOperationQueue *queue1;
 /// 队列2
 @property (nonatomic,strong) NSOperationQueue *queue2;
+/// 队列3
+@property (nonatomic,strong) NSOperationQueue *queue3;
+/// 队列4
+@property (nonatomic,strong) NSOperationQueue *queue4;
 
 /// 操作缓存池
 @property (nonatomic,strong) NSCache *operationCache;
@@ -33,7 +37,7 @@ NS_ASSUME_NONNULL_BEGIN
 //礼物的id
 @property (nonatomic,strong) NSCache *gifInfos;
 
-@property (nonatomic,copy) NSString *oldUser;
+@property (nonatomic,retain) NSMutableArray *oldUser;
 
 //用户 count
 @property (nonatomic,assign) int moreUserCount;

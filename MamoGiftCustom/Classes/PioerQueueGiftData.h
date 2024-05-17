@@ -13,7 +13,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic,copy) NSString * _Nullable senderHead; // 送礼物者头像
 @property (nonatomic,copy) NSString * _Nullable senderName; // 送礼物者Name
-@property (nonatomic,copy) NSString * _Nullable receiverName; // 礼物接受者Name
+@property (nonatomic,copy) NSString * _Nullable senderUserId; // 送礼物者id
 
 
 @property (nonatomic,copy) NSString * _Nullable giftImage; // 礼物icon地址
@@ -21,7 +21,10 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic,copy) NSString * _Nullable giftName; // 礼物名称
 @property (nonatomic,assign) NSInteger giftCount; // 礼物个数
 @property (nonatomic,copy)NSString * _Nullable giftUid;//礼物id
-@property (nonatomic,assign)int diamonds;//礼物价格
+@property (nonatomic,assign)int diamonds; //礼物价格
+
+@property (nonatomic,assign)int show_type; //2 - 250 3 - 500  其他100  动画效果
+@property (nonatomic,assign)int winning_multiple; //倍数 > 0显示 100 250 500
 
 @property (nullable, nonatomic, copy) NSString  *updatedAt;
 ///礼物类型

@@ -69,21 +69,45 @@
     [[NSOperationQueue mainQueue] addOperationWithBlock:^{
     
         self.presentView.model = self.model;
-        if ([self.model.type intValue] >2 ) {
-            // i ％ 2 控制最多允许出现几行
-            if (self.index % 2) {
-                self.presentView.frame = CGRectMake(-20, 280 * ratioHeight, self.listView.frame.size.width / 2, 40); //120
-            }else {
-                self.presentView.frame = CGRectMake(-20, 260 * ratioHeight, self.listView.frame.size.width / 2, 40); //100
+        if (![[NSUserDefaults standardUserDefaults] boolForKey:@"PioerLivingLookEffects"]) {
+            [self.presentView hidePresendView];
+            return;
             }
-        }else{
-            // i ％ 2 控制最多允许出现几行
-            if (self.index % 2) {
-                self.presentView.frame = CGRectMake(-20, 350 * ratioHeight, self.listView.frame.size.width / 2, 40); //220
-            }else {
-                self.presentView.frame = CGRectMake(-20, 280 * ratioHeight, self.listView.frame.size.width / 2, 40); //150
-            }
+//        if ([self.model.type intValue] >4 ) {
+//            // i ％ 4 控制最多允许出现几行
+//            if (self.index % 4) {
+//                self.presentView.frame = CGRectMake(-20, 320 * ratioHeight, self.listView.frame.size.width / 2, 40); //120
+//            }else if (self.index % 3) {
+//                self.presentView.frame = CGRectMake(-20, 300 * ratioHeight, self.listView.frame.size.width / 2, 40); //120
+//            }else if (self.index % 2) {
+//                self.presentView.frame = CGRectMake(-20, 280 * ratioHeight, self.listView.frame.size.width / 2, 40); //120
+//            }else {
+//                self.presentView.frame = CGRectMake(-20, 260 * ratioHeight, self.listView.frame.size.width / 2, 40); //100
+//            }
+//            NSLog(@"9打印 = %f", self.presentView.frame.origin.y);
+//        }else{
+            // i ％ 4 控制最多允许出现几行
+        NSLog(@"当前index = %ld", (long)self.index);
+        if (self.index % 4 == 0) {
+            self.presentView.frame = CGRectMake(-20, (kHeight - 40) / 2 , self.listView.frame.size.width / 2, 40);
+        } else if (self.index % 4 == 1) {
+            self.presentView.frame = CGRectMake(-20, (kHeight - 40) / 2 - 60 , self.listView.frame.size.width / 2, 40);
+        } else if (self.index % 4 == 2) {
+            self.presentView.frame = CGRectMake(-20, (kHeight - 40) / 2 + 60 , self.listView.frame.size.width / 2, 40);
+        } else if (self.index % 4 == 3) {
+            self.presentView.frame = CGRectMake(-20, (kHeight - 40) / 2 - 120 , self.listView.frame.size.width / 2, 40);
         }
+//            if (self.index % 4) {
+//                self.presentView.frame = CGRectMake(-20, 520 , self.listView.frame.size.width / 2, 40); //350 * ratioHeight
+//            }else if (self.index % 3) {
+//                self.presentView.frame = CGRectMake(-20, 470 , self.listView.frame.size.width / 2, 40); //350 * ratioHeight
+//            }else if (self.index % 2) {
+//                self.presentView.frame = CGRectMake(-20, 400 , self.listView.frame.size.width / 2, 40); //350 * ratioHeight
+//            }else {
+//                self.presentView.frame = CGRectMake(-20, 330, self.listView.frame.size.width / 2, 40); //280
+//            }
+            NSLog(@"10打印 = %f", self.presentView.frame.origin.y);
+//        }
 
         
        self.presentView.originFrame = self.presentView.frame;
