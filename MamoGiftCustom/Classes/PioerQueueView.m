@@ -7,7 +7,7 @@
 
 #import "PioerQueueView.h"
 #import "UIView+Coordinate.h"
-#import <SDWebImage.h>
+#import "SDWebImage.h"
 #import "UIColor+CustomColor.h"
 #import <AVFoundation/AVFoundation.h>
 #import "PioerParabolaAnimations.h"
@@ -129,7 +129,7 @@ static NSString *const kBreathAnimationName = @"BreathAnimationName";
     
     _giftHaveImage.frame = CGRectMake(0, 0, 78, 78);
     
-    _giftHaveMultipleLabel.frame = CGRectMake(0, 45, 78, 10);
+    _giftHaveMultipleLabel.frame = CGRectMake(0, 52, 78, 10);
     _giftHaveMultipleLabel.textAlignment = NSTextAlignmentCenter;
     
     _senderHead.frame = CGRectMake(12, 2, 36, 36);
@@ -260,16 +260,29 @@ static NSString *const kBreathAnimationName = @"BreathAnimationName";
         CGFloat newX = currentFrame.origin.x;
         CGFloat newY = 52;
         
+//        if (model.show_type == 2) { //show_type; //2 - 250 3 - 500  其他100  动画效果
+//            _giftHaveMultipleLabel.text = @"x250";
+//            newY = 52;
+//            _giftHaveImage.image = [UIImage imageNamed:@"live_gift_gain_250"];
+//        } else if (model.show_type == 3) {
+//            _giftHaveMultipleLabel.text = @"x500";
+//            newY = 52;
+//            _giftHaveImage.image = [UIImage imageNamed:@"live_gift_gain_500"];
+//        } else {
+//            _giftHaveMultipleLabel.text = @"x100";
+//            newY = 52;
+//            _giftHaveImage.image = [UIImage imageNamed:@"live_gift_gain_100"];
+//        }
         if (model.show_type == 2) { //show_type; //2 - 250 3 - 500  其他100  动画效果
-            _giftHaveMultipleLabel.text = @"x250";
+            _giftHaveMultipleLabel.text = [NSString stringWithFormat:@"x%d", model.winning_multiple]; //@"x250";
             newY = 52;
             _giftHaveImage.image = [UIImage imageNamed:@"live_gift_gain_250"];
         } else if (model.show_type == 3) {
-            _giftHaveMultipleLabel.text = @"x500";
+            _giftHaveMultipleLabel.text = [NSString stringWithFormat:@"x%d", model.winning_multiple];//@"x500";
             newY = 52;
             _giftHaveImage.image = [UIImage imageNamed:@"live_gift_gain_500"];
         } else {
-            _giftHaveMultipleLabel.text = @"x100";
+            _giftHaveMultipleLabel.text = [NSString stringWithFormat:@"x%d", model.winning_multiple];
             newY = 52;
             _giftHaveImage.image = [UIImage imageNamed:@"live_gift_gain_100"];
         }
