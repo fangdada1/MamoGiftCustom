@@ -12,9 +12,9 @@ NS_ASSUME_NONNULL_BEGIN
 @interface PioerParabolaAnimations : UIView
 
 // 显示金币掉落动画
-+ (void)parabolaAnimationsWithX:(CGFloat)nowX withY:(CGFloat)nowY;
++ (void)parabolaAnimationsWithX:(CGFloat)nowX withY:(CGFloat)nowY parabolaView:(UIView *)parabolaSuperview;
 
-+ (void)startAnimationForIndex:(CGFloat)nowX withY:(CGFloat)nowY withIndex:(int)index;
++ (void)startAnimationForIndex:(CGFloat)nowX withY:(CGFloat)nowY withIndex:(int)index parabolaSuperview:(UIView *)parabolaSuperview;
 
 @end
 

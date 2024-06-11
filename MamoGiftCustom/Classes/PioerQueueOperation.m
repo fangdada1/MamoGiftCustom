@@ -69,10 +69,11 @@
     [[NSOperationQueue mainQueue] addOperationWithBlock:^{
     
         self.presentView.model = self.model;
-        if (![[NSUserDefaults standardUserDefaults] boolForKey:@"PioerLivingLookEffects"]) {
-            [self.presentView hidePresendView];
-            return;
-            }
+        self.presentView.parabolaView = self.listView;
+//        if (![[NSUserDefaults standardUserDefaults] boolForKey:@"PioerLivingLookEffects"]) {
+//            [self.presentView hidePresendView];
+//            return;
+//            }
 //        if ([self.model.type intValue] >4 ) {
 //            // i ％ 4 控制最多允许出现几行
 //            if (self.index % 4) {

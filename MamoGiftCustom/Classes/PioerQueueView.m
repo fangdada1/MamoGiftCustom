@@ -32,6 +32,7 @@ static NSString *const kBreathAnimationName = @"BreathAnimationName";
 //礼物中奖视图
 @property (nonatomic,strong) UIView *giftHaveView;
 @property (nonatomic,strong) UIImageView *giftHaveImage;
+@property (nonatomic,strong) UIImageView *giftRotateImage;
 @property (nonatomic,strong) UILabel *giftHaveMultipleLabel;
 
 @property (nonatomic,strong) AVAudioPlayer *audioPlayer;
@@ -54,13 +55,14 @@ static NSString *const kBreathAnimationName = @"BreathAnimationName";
     } completion:^(BOOL finished) {
         [self shakeNumberLabel];
     }];
+    //    NSLog(@"！2 ！finished移除队列 = %@！！", completed);
     self.completeBlock = completed;
 }
 
 //MARK:-- 设置数量lab动画
 - (void)shakeNumberLabel {
     if (self.model.giftCount>1) {
-//        NSLog(@"model.giftCount= %ld",self.model.giftCount);
+        //        NSLog(@"model.giftCount= %ld",self.model.giftCount);
         self.animCount += self.model.giftCount;
         
         [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(hidePresendView) object:nil];//可以取消成功。
@@ -69,9 +71,9 @@ static NSString *const kBreathAnimationName = @"BreathAnimationName";
         [self.giftShakeLab startAnimWithDuration:0.3];
         
     }else{
-        NSLog(@"加之前animCount = %ld",(long)self.animCount);
+//        NSLog(@"加之前animCount = %ld",(long)self.animCount);
         self.animCount ++;
-        NSLog(@"加之后animCount = %ld",(long)self.animCount);
+//        NSLog(@"加之后animCount = %ld",(long)self.animCount);
         [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(hidePresendView) object:nil];//可以取消成功。
         [self performSelector:@selector(hidePresendView) withObject:nil afterDelay:3];
         self.giftShakeLab.text = [NSString stringWithFormat:@"X%ld",self.animCount];
@@ -85,22 +87,29 @@ static NSString *const kBreathAnimationName = @"BreathAnimationName";
 //MARK:--自动隐藏
 - (void)hidePresendView
 {
-    [UIView animateWithDuration:0.30 delay:0 options:UIViewAnimationOptionCurveEaseOut animations:^{
-        self.frame = CGRectMake(0, self.frame.origin.y - 20, self.frame.size.width, self.frame.size.height);
-        self.alpha = 0;
-    } completion:^(BOOL finished) {
-        if (self.completeBlock) {
-            self.completeBlock(finished,self.animCount);
-        }
-        [self reset];
-        self.finished = finished;
-        [self removeFromSuperview];
-    }];
+    if (self.superview != nil) {
+        //        NSLog(@"！！通知暂未移除 准备移除队列！！");
+        //加个通知 移除
+        [UIView animateWithDuration:0.30 delay:0 options:UIViewAnimationOptionCurveEaseOut animations:^{
+            self.frame = CGRectMake(0, self.frame.origin.y - 20, self.frame.size.width, self.frame.size.height);
+            self.alpha = 0;
+        } completion:^(BOOL finished) {
+            if (self.completeBlock) {
+                //                NSLog(@"！1 ！finished移除队列 = %d！！", finished);
+                self.completeBlock(true, self.animCount);
+            }
+            [self reset];
+            self.finished = finished;
+            [self removeFromSuperview];
+        }];
+    } else {
+        //        NSLog(@"！！已通知移除 ！！");
+    }
 }
 
 // 重置
 - (void)reset {
-    
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
     self.frame = _originFrame;
     self.alpha = 1;
     self.animCount = 0;
@@ -111,10 +120,30 @@ static NSString *const kBreathAnimationName = @"BreathAnimationName";
 - (instancetype)init {
     if (self = [super init]) {
         _originFrame = self.frame;
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(removeGiftViewQueue:)
+                                                     name:@"removeGiftViewQueue"
+                                                   object:nil];
         [self setUI];
     }
     return self;
 }
+
+// 处理通知
+- (void)removeGiftViewQueue:(NSNotification *)notification {
+    //    NSLog(@"！！removeGiftViewQueue通知移除队列！！");
+    //加个通知 移除
+    self.frame = CGRectMake(0, self.frame.origin.y - 20, self.frame.size.width, self.frame.size.height);
+    self.alpha = 0;
+    if (self.completeBlock) {
+        
+        self.completeBlock(true, self.animCount);
+    }
+    [self reset];
+    self.finished = true;
+    [self removeFromSuperview];
+}
+
 
 #pragma mark 布局 UI
 - (void)layoutSubviews {
@@ -129,12 +158,16 @@ static NSString *const kBreathAnimationName = @"BreathAnimationName";
     
     _giftHaveImage.frame = CGRectMake(0, 0, 78, 78);
     
+    _giftRotateImage.frame = CGRectMake(0, 0, 78, 78);
+    _giftRotateImage.hidden = YES;
+    
     _giftHaveMultipleLabel.frame = CGRectMake(0, 52, 78, 10);
     _giftHaveMultipleLabel.textAlignment = NSTextAlignmentCenter;
     
     _senderHead.frame = CGRectMake(12, 2, 36, 36);
     _senderHead.layer.cornerRadius = 18;
     _senderHead.layer.masksToBounds = YES;
+    _senderHead.contentMode = UIViewContentModeScaleAspectFill;
     
     _giftNameLab.frame = CGRectMake(50, 0, 80, 17);
     //    _giftNameLab.width = self.width - 80;
@@ -183,10 +216,13 @@ static NSString *const kBreathAnimationName = @"BreathAnimationName";
     
     //中奖视图
     _giftHaveView = [[UIView alloc] init];
-    _giftHaveView.hidden = YES;
+    //    _giftHaveView.hidden = YES;
     
     _giftHaveImage = [[UIImageView alloc] init];
     _giftHaveImage.image = [UIImage imageNamed:@"live_gift_gain_100"];
+    
+    _giftRotateImage = [[UIImageView alloc] init];
+    _giftRotateImage.image = [UIImage imageNamed:@"live_gift_rotate"];
     
     _giftHaveMultipleLabel = [[UILabel alloc] init];
     _giftHaveMultipleLabel.text = @"x100";
@@ -229,11 +265,14 @@ static NSString *const kBreathAnimationName = @"BreathAnimationName";
     
     //中奖视图
     [self addSubview:_giftHaveView];
+    [_giftHaveView addSubview:_giftRotateImage];
     [_giftHaveView addSubview:_giftHaveImage];
     [_giftHaveView addSubview:_giftHaveMultipleLabel];
 }
 
 - (void)setModel:(PioerQueueGiftData *)model {
+    
+    //    if (self.superview != nil) {
     _model = model;
     
     [_senderHead sd_setImageWithURL:[NSURL URLWithString:_model.senderHead] placeholderImage:[UIImage imageNamed:@"pioer_feed_placehold"]];
@@ -241,64 +280,73 @@ static NSString *const kBreathAnimationName = @"BreathAnimationName";
     _giftContentLab.text = [NSString stringWithFormat:@"%@",model.giftName];
     [_giftImageView sd_setImageWithURL:[NSURL URLWithString:_model.giftImage] placeholderImage:[UIImage imageNamed:@"pioer_feed_placehold"]];
     _giftHaveView.hidden = NO;
-    
+    if (_model.nowType != 1) { //礼物类型 1幸运礼物 0礼物其他
+        _giftHaveMultipleLabel.hidden = YES;
+        _giftRotateImage.hidden = YES;
+        _giftHaveImage.hidden = YES;
+    }
     //    NSLog(@"1打印坐标 x=%f  y=%f ",_originFrame.origin.x, _originFrame.origin.y);
     //    NSLog(@"2打印坐标 x=%f  y=%f ",self.x, self.y);
     
     
     //    [self makeparabolaAnimation];
-//    NSLog(@"当前中奖用户id = \(%@)", model.senderUserId);
-//    NSLog(@"当前自己用户id = \(%@)", [[NSUserDefaults standardUserDefaults] stringForKey:@"PioerUserIdKey"]);
-    if (model.winning_multiple > 0 && [model.senderUserId isEqualToString:[[NSUserDefaults standardUserDefaults] stringForKey:@"PioerUserIdKey"]]) { //需要显示放大缩小
-        _giftHaveView.hidden = NO;
-        if (![[NSUserDefaults standardUserDefaults] boolForKey:@"PioerLivingLookEffects"]) {
-            NSLog(@"！！隐藏送礼物视图！！");
-            _giftHaveView.hidden = YES;
-        }
+    //    NSLog(@"当前中奖用户id = \(%@)", model.senderUserId);
+    //    NSLog(@"当前自己用户id = \(%@)", [[NSUserDefaults standardUserDefaults] stringForKey:@"PioerUserIdKey"]);
+    if (model.winning_multiple > 0) { //需要显示放大缩小
+        //        _giftHaveView.hidden = NO;
+        //        if (![[NSUserDefaults standardUserDefaults] boolForKey:@"PioerLivingLookEffects"]) {
+        //            NSLog(@"！！隐藏送礼物视图！！");
+        //            _giftHaveView.hidden = YES;
+        //        }
+        _giftHaveMultipleLabel.hidden = NO;
+        _giftRotateImage.hidden = NO;
+        _giftHaveImage.hidden = NO;
         CGRect currentFrame = _giftHaveMultipleLabel.frame;
         
         CGFloat newX = currentFrame.origin.x;
         CGFloat newY = 52;
-        
-//        if (model.show_type == 2) { //show_type; //2 - 250 3 - 500  其他100  动画效果
-//            _giftHaveMultipleLabel.text = @"x250";
-//            newY = 52;
-//            _giftHaveImage.image = [UIImage imageNamed:@"live_gift_gain_250"];
-//        } else if (model.show_type == 3) {
-//            _giftHaveMultipleLabel.text = @"x500";
-//            newY = 52;
-//            _giftHaveImage.image = [UIImage imageNamed:@"live_gift_gain_500"];
-//        } else {
-//            _giftHaveMultipleLabel.text = @"x100";
-//            newY = 52;
-//            _giftHaveImage.image = [UIImage imageNamed:@"live_gift_gain_100"];
-//        }
+        NSLog(@"当前送礼的show_type=%d model.winning_multiple=%d",model.show_type, model.winning_multiple);
         if (model.show_type == 2) { //show_type; //2 - 250 3 - 500  其他100  动画效果
             _giftHaveMultipleLabel.text = [NSString stringWithFormat:@"x%d", model.winning_multiple]; //@"x250";
             newY = 52;
             _giftHaveImage.image = [UIImage imageNamed:@"live_gift_gain_250"];
+            _giftRotateImage.hidden = NO;
         } else if (model.show_type == 3) {
             _giftHaveMultipleLabel.text = [NSString stringWithFormat:@"x%d", model.winning_multiple];//@"x500";
             newY = 52;
             _giftHaveImage.image = [UIImage imageNamed:@"live_gift_gain_500"];
+            _giftRotateImage.hidden = NO;
         } else {
+            _giftRotateImage.hidden = YES;
             _giftHaveMultipleLabel.text = [NSString stringWithFormat:@"x%d", model.winning_multiple];
             newY = 52;
             _giftHaveImage.image = [UIImage imageNamed:@"live_gift_gain_100"];
         }
         currentFrame.origin = CGPointMake(newX, newY);
-        NSLog(@"打印新坐标x =  %f", newX);
-        NSLog(@"打印新坐标y =  %f", newY);
+        //        NSLog(@"打印新坐标x =  %f", newX);
+        //        NSLog(@"打印新坐标y =  %f", newY);
         _giftHaveMultipleLabel.frame = currentFrame;
         [self layoutIfNeeded];
-        [self.player play];
-        BOOL nowRewards = [[NSUserDefaults standardUserDefaults] boolForKey:@"PioerLivingStopRewards"];
-        if (!nowRewards && [[NSUserDefaults standardUserDefaults] boolForKey:@"PioerLivingLookEffects"]) {
-            [PioerParabolaAnimations parabolaAnimationsWithX: self.x withY: self.y];
+        if ([model.senderUserId isEqualToString:[[NSUserDefaults standardUserDefaults] stringForKey:@"PioerUserIdKey"]]) {
+            if (model.isAnchorSend != 1) {
+                [self.player play];
+            }
+            BOOL nowRewards = [[NSUserDefaults standardUserDefaults] boolForKey:@"PioerLivingStopRewards"];
+            if (!nowRewards) {
+                [PioerParabolaAnimations parabolaAnimationsWithX: self.x withY: self.y parabolaView: self.parabolaView];
+            }
         }
     } else {
-        _giftHaveView.hidden = YES;
+        _giftHaveMultipleLabel.hidden = YES;
+        _giftRotateImage.hidden = YES;
+        _giftHaveImage.hidden = YES;
     }
+    //    }
+    
+    //    [self layoutIfNeeded];
+    //    else {
+    //        _giftHaveView.hidden = YES;
+    //    }
 }
 
 - (void)addBreathAnimation

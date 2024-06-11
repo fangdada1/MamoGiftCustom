@@ -19,6 +19,7 @@ typedef void(^completeBlock)(BOOL finished,NSInteger finishCount);
 @property (nonatomic,strong) PioerQueueShake *giftShakeLab; // 礼物个数抖动动画Lab
 @property (nonatomic,assign) NSInteger animCount; // 动画执行到了第几次
 @property (nonatomic,assign) CGRect originFrame; // 记录原始坐标
+@property (nonatomic,strong) UIView *parabolaView;
 
 @property (nonatomic,assign,getter=isFinished) BOOL finished;
 - (void)animateWithCompleteBlock:(completeBlock)completed;

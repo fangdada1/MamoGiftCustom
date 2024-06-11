@@ -15,7 +15,7 @@
     [UIView animateKeyframesWithDuration:duration delay:0 options:0 animations:^{
         [UIView addKeyframeWithRelativeStartTime:0 relativeDuration:1/2.0 animations:^{
             
-            self.transform = CGAffineTransformMakeScale(4, 4);
+            self.transform = CGAffineTransformMakeScale(2, 2);
         }];
         [UIView addKeyframeWithRelativeStartTime:1/2.0 relativeDuration:1/2.0 animations:^{
             self.transform = CGAffineTransformMakeScale(0.8, 0.8);

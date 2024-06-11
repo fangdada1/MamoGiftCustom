@@ -11,28 +11,28 @@
 @implementation PioerParabolaAnimations
 
 
-+ (void)parabolaAnimationsWithX:(CGFloat)nowX withY:(CGFloat)nowY {
++ (void)parabolaAnimationsWithX:(CGFloat)nowX withY:(CGFloat)nowY parabolaView:(UIView *)parabolaSuperview {
     for (int index = 0; index < 12; index ++) {
 //        NSLog(@"当前view x = %f 当前view y = %f", nowX, nowY);
-        [PioerParabolaAnimations startAnimationForIndex: nowX withY: nowY withIndex: index];
+        [PioerParabolaAnimations startAnimationForIndex: nowX withY: nowY withIndex: index parabolaSuperview: parabolaSuperview];
     }
 }
 
-+ (void)startAnimationForIndex:(CGFloat)nowX withY:(CGFloat)nowY withIndex:(int)index {
-    if (![[NSUserDefaults standardUserDefaults] boolForKey:@"PioerLivingLookEffects"]) {
-        return;
-    }
++ (void)startAnimationForIndex:(CGFloat)nowX withY:(CGFloat)nowY withIndex:(int)index parabolaSuperview:(UIView *)parabolaSuperview {
+//    if (![[NSUserDefaults standardUserDefaults] boolForKey:@"PioerLivingLookEffects"]) {
+//        return;
+//    }
     UIImageView *parabolaView = [[UIImageView alloc] init];
     parabolaView.frame = CGRectMake(20, 0, 20, 20);
     parabolaView.image = [UIImage imageNamed: @"person_top_diamond"];
 
-    UIWindow *keyWindow = [[UIApplication sharedApplication].windows filteredArrayUsingPredicate:[NSPredicate predicateWithBlock:^BOOL(UIWindow *evaluatedObject, NSDictionary *bindings) {
-        return [evaluatedObject isKeyWindow];
-    }]].firstObject;
+//    UIWindow *keyWindow = [[UIApplication sharedApplication].windows filteredArrayUsingPredicate:[NSPredicate predicateWithBlock:^BOOL(UIWindow *evaluatedObject, NSDictionary *bindings) {
+//        return [evaluatedObject isKeyWindow];
+//    }]].firstObject;
 
 //    NSLog(@"看看内容 = %@",keyWindow.rootViewController.view);
-    [keyWindow addSubview: parabolaView];
-    [keyWindow bringSubviewToFront: parabolaView];
+    [parabolaSuperview addSubview: parabolaView];
+    [parabolaSuperview bringSubviewToFront: parabolaView];
     // 抛物线关键帧动画
     CAKeyframeAnimation *keyframeAnimation = [CAKeyframeAnimation animationWithKeyPath:@"position"];
     CGMutablePathRef path = CGPathCreateMutable();
