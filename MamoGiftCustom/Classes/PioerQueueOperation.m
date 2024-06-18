@@ -88,7 +88,7 @@
 //            NSLog(@"9打印 = %f", self.presentView.frame.origin.y);
 //        }else{
             // i ％ 4 控制最多允许出现几行
-        NSLog(@"当前index = %ld", (long)self.index);
+//        NSLog(@"当前index = %ld", (long)self.index);
         if (self.index % 4 == 0) {
             self.presentView.frame = CGRectMake(-20, (kHeight - 40) / 2 , self.listView.frame.size.width / 2, 40);
         } else if (self.index % 4 == 1) {
@@ -107,7 +107,7 @@
 //            }else {
 //                self.presentView.frame = CGRectMake(-20, 330, self.listView.frame.size.width / 2, 40); //280
 //            }
-            NSLog(@"10打印 = %f", self.presentView.frame.origin.y);
+//            NSLog(@"10打印 = %f", self.presentView.frame.origin.y);
 //        }
 
         

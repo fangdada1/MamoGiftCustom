@@ -41,9 +41,8 @@
 - (void)addDownloadWithSession:(NSURLSession *)session URL:(PioerdReceiveGiftData *)model begin:(void(^)(NSString *))begin progress:(void(^)(NSInteger,NSInteger))progress complete:(void(^)(NSDictionary *,NSError *))complet {
     // 获取operation对象
     PioerGiftDownloadOperation *operation = [self operationWithUrl:[NSURL URLWithString:model.animEffectUrl].absoluteString];
-    
     if (operation == nil) {
-        
+            
         operation = [[PioerGiftDownloadOperation alloc] initWith:model session:session];
         
         if (operation == nil) {
@@ -55,6 +54,10 @@
                 complet(nil,[NSError errorWithDomain:@"构建下载任务失败" code:-1 userInfo:nil]);
             }
             return;
+        }
+        if(self.operations == nil) {
+            NSLog(@"!!operations对象为空!!");
+           self.operations = [NSMutableSet set];
         }
         
         [self.operations addObject:operation];

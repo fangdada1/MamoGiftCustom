@@ -71,9 +71,9 @@ static NSString *const kBreathAnimationName = @"BreathAnimationName";
         [self.giftShakeLab startAnimWithDuration:0.3];
         
     }else{
-//        NSLog(@"加之前animCount = %ld",(long)self.animCount);
+        //        NSLog(@"加之前animCount = %ld",(long)self.animCount);
         self.animCount ++;
-//        NSLog(@"加之后animCount = %ld",(long)self.animCount);
+        //        NSLog(@"加之后animCount = %ld",(long)self.animCount);
         [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(hidePresendView) object:nil];//可以取消成功。
         [self performSelector:@selector(hidePresendView) withObject:nil afterDelay:3];
         self.giftShakeLab.text = [NSString stringWithFormat:@"X%ld",self.animCount];
@@ -160,7 +160,7 @@ static NSString *const kBreathAnimationName = @"BreathAnimationName";
     
     _giftRotateImage.frame = CGRectMake(0, 0, 78, 78);
     _giftRotateImage.hidden = YES;
-    
+    [self removeTransFormAnimation:_giftRotateImage];
     _giftHaveMultipleLabel.frame = CGRectMake(0, 52, 78, 10);
     _giftHaveMultipleLabel.textAlignment = NSTextAlignmentCenter;
     
@@ -283,6 +283,7 @@ static NSString *const kBreathAnimationName = @"BreathAnimationName";
     if (_model.nowType != 1) { //礼物类型 1幸运礼物 0礼物其他
         _giftHaveMultipleLabel.hidden = YES;
         _giftRotateImage.hidden = YES;
+        [self removeTransFormAnimation:_giftRotateImage];
         _giftHaveImage.hidden = YES;
     }
     //    NSLog(@"1打印坐标 x=%f  y=%f ",_originFrame.origin.x, _originFrame.origin.y);
@@ -305,19 +306,22 @@ static NSString *const kBreathAnimationName = @"BreathAnimationName";
         
         CGFloat newX = currentFrame.origin.x;
         CGFloat newY = 52;
-        NSLog(@"当前送礼的show_type=%d model.winning_multiple=%d",model.show_type, model.winning_multiple);
+        //        NSLog(@"当前送礼的show_type=%d model.winning_multiple=%d",model.show_type, model.winning_multiple);
         if (model.show_type == 2) { //show_type; //2 - 250 3 - 500  其他100  动画效果
             _giftHaveMultipleLabel.text = [NSString stringWithFormat:@"x%d", model.winning_multiple]; //@"x250";
             newY = 52;
             _giftHaveImage.image = [UIImage imageNamed:@"live_gift_gain_250"];
             _giftRotateImage.hidden = NO;
+            [self startTransFormAnimation:_giftRotateImage];
         } else if (model.show_type == 3) {
             _giftHaveMultipleLabel.text = [NSString stringWithFormat:@"x%d", model.winning_multiple];//@"x500";
             newY = 52;
             _giftHaveImage.image = [UIImage imageNamed:@"live_gift_gain_500"];
             _giftRotateImage.hidden = NO;
+            [self startTransFormAnimation:_giftRotateImage];
         } else {
             _giftRotateImage.hidden = YES;
+            [self removeTransFormAnimation:_giftRotateImage];
             _giftHaveMultipleLabel.text = [NSString stringWithFormat:@"x%d", model.winning_multiple];
             newY = 52;
             _giftHaveImage.image = [UIImage imageNamed:@"live_gift_gain_100"];
@@ -329,16 +333,17 @@ static NSString *const kBreathAnimationName = @"BreathAnimationName";
         [self layoutIfNeeded];
         if ([model.senderUserId isEqualToString:[[NSUserDefaults standardUserDefaults] stringForKey:@"PioerUserIdKey"]]) {
             if (model.isAnchorSend != 1) {
-                [self.player play];
-            }
-            BOOL nowRewards = [[NSUserDefaults standardUserDefaults] boolForKey:@"PioerLivingStopRewards"];
-            if (!nowRewards) {
-                [PioerParabolaAnimations parabolaAnimationsWithX: self.x withY: self.y parabolaView: self.parabolaView];
+                BOOL nowRewards = [[NSUserDefaults standardUserDefaults] boolForKey:@"PioerLivingStopRewards"];
+                if (!nowRewards) {
+                    [self.player play];
+                    [PioerParabolaAnimations parabolaAnimationsWithX: self.x withY: self.y parabolaView: self.parabolaView];
+                }
             }
         }
     } else {
         _giftHaveMultipleLabel.hidden = YES;
         _giftRotateImage.hidden = YES;
+        [self removeTransFormAnimation:_giftRotateImage];
         _giftHaveImage.hidden = YES;
     }
     //    }
@@ -368,6 +373,26 @@ static NSString *const kBreathAnimationName = @"BreathAnimationName";
     [animation setValue:kBreathAnimationKey forKey:kBreathAnimationName];
     [layer addAnimation:animation forKey:kBreathAnimationKey];
     
+}
+/// 开始动画
+- (void)startTransFormAnimation:(UIImageView *)view {
+    [self removeTransFormAnimation:view];
+    CABasicAnimation *animation = [CABasicAnimation animationWithKeyPath:@"transform.rotation.z"];//rotation.z
+    //默认是顺时针效果，若将fromValue和toValue的值互换，则为逆时针效果
+    animation.toValue =   [NSNumber numberWithFloat: M_PI *2];
+    animation.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionLinear];
+    animation.duration = 2;
+    animation.autoreverses = NO;
+    animation.cumulative = NO;
+    animation.removedOnCompletion = NO;
+    animation.fillMode = kCAFillModeForwards;
+    animation.repeatCount = FLT_MAX; //如果这里想设置成一直自旋转，可以设置为FLT_MAX，
+    [view.layer addAnimation:animation forKey:@"animation"];
+    [view startAnimating];
+}
+/// 移除动画
+- (void)removeTransFormAnimation:(UIImageView *)view {
+    [view.layer removeAllAnimations];
 }
 
 /** 设置缩放动画 */

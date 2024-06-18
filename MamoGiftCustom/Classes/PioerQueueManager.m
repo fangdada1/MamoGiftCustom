@@ -155,8 +155,8 @@ static dispatch_once_t onceToken;
             // 将操作添加到缓存池
             [self.operationCache setObject:op forKey:userID];
             op.index = self.moreUserCount % 4;
-            NSLog(@"3当前moreUserCount = %d", self.moreUserCount);
-            NSLog(@"3当前op.model.giftCount = %ld", (long)op.model.giftCount);
+//            NSLog(@"3当前moreUserCount = %d", self.moreUserCount);
+//            NSLog(@"3当前op.model.giftCount = %ld", (long)op.model.giftCount);
             /*
              2024-05-17 13:43:17.893553+0800 Pioer[1476:53259] 3当前moreUserCount = 0
              2024-05-17 13:43:17.893840+0800 Pioer[1476:53259] 3当前op.model.giftCount = 50
