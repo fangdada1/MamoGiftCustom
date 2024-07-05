@@ -187,6 +187,11 @@ static NSString *const kBreathAnimationName = @"BreathAnimationName";
     _giftShakeLab.textAlignment = NSTextAlignmentCenter;
     
     NSArray *colors = @[(id)[UIColor colorWithHexString:@"#FF099C"].CGColor, (id)[UIColor colorWithHexString:@"#FFDD2B"].CGColor];
+    for (CALayer *sublayer in self.layer.sublayers) {
+        if ([sublayer isKindOfClass:[CAGradientLayer class]]) {
+            [sublayer removeFromSuperlayer];
+        }
+    }
     // 创建渐变层
     CAGradientLayer* gradientLayer = [CAGradientLayer layer];
     gradientLayer.frame = _giftShakeLab.frame;

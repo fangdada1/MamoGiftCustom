@@ -90,13 +90,13 @@
             // i ％ 4 控制最多允许出现几行
 //        NSLog(@"当前index = %ld", (long)self.index);
         if (self.index % 4 == 0) {
-            self.presentView.frame = CGRectMake(-20, (kHeight - 40) / 2 , self.listView.frame.size.width / 2, 40);
+            self.presentView.frame = CGRectMake(-20, (kHeight - 40) / 2 - 30 , self.listView.frame.size.width / 2, 40);
         } else if (self.index % 4 == 1) {
-            self.presentView.frame = CGRectMake(-20, (kHeight - 40) / 2 - 60 , self.listView.frame.size.width / 2, 40);
+            self.presentView.frame = CGRectMake(-20, (kHeight - 40) / 2 - 30 - 60 , self.listView.frame.size.width / 2, 40);
         } else if (self.index % 4 == 2) {
-            self.presentView.frame = CGRectMake(-20, (kHeight - 40) / 2 + 60 , self.listView.frame.size.width / 2, 40);
+            self.presentView.frame = CGRectMake(-20, (kHeight - 40) / 2 - 30 + 60 , self.listView.frame.size.width / 2, 40);
         } else if (self.index % 4 == 3) {
-            self.presentView.frame = CGRectMake(-20, (kHeight - 40) / 2 - 120 , self.listView.frame.size.width / 2, 40);
+            self.presentView.frame = CGRectMake(-20, (kHeight - 40) / 2 - 30 - 120 , self.listView.frame.size.width / 2, 40);
         }
 //            if (self.index % 4) {
 //                self.presentView.frame = CGRectMake(-20, 520 , self.listView.frame.size.width / 2, 40); //350 * ratioHeight
