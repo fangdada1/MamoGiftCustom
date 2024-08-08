@@ -167,6 +167,7 @@ static NSString *const kBreathAnimationName = @"BreathAnimationName";
     _senderHead.frame = CGRectMake(12, 2, 36, 36);
     _senderHead.layer.cornerRadius = 18;
     _senderHead.layer.masksToBounds = YES;
+    _senderHead.userInteractionEnabled = YES;
     _senderHead.contentMode = UIViewContentModeScaleAspectFill;
     
     _giftNameLab.frame = CGRectMake(50, 0, 80, 17);
@@ -180,7 +181,7 @@ static NSString *const kBreathAnimationName = @"BreathAnimationName";
     
     // 初始化动画label
     _giftShakeLab =  [[PioerQueueShake alloc] init];
-    _giftShakeLab.frame = CGRectMake(142, -30, 120, 100);
+    _giftShakeLab.frame = CGRectMake(112, -30, 200, 100);
     _giftShakeLab.font = [UIFont systemFontOfSize:28];
     _giftShakeLab.borderColor = [UIColor colorWithHexString:@"#D64A2C"];
     _giftShakeLab.textColor = [UIColor colorWithHexString:@"#FFDD2B"];
@@ -204,6 +205,7 @@ static NSString *const kBreathAnimationName = @"BreathAnimationName";
     _giftShakeLab.frame = gradientLayer.bounds;
     
     _giftImageView.frame = CGRectMake(116, 0, 40, 40);
+    _giftImageView.userInteractionEnabled = YES;
     
 }
 
@@ -263,6 +265,12 @@ static NSString *const kBreathAnimationName = @"BreathAnimationName";
     [self addSubview:_senderHead];
     [self addSubview:_giftImageView];
     
+    UITapGestureRecognizer *headGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(senderHeadTapped:)];
+    [_senderHead addGestureRecognizer:headGesture];
+    
+    UITapGestureRecognizer *giftImageGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(giftImageTapped:)];
+    [_giftImageView addGestureRecognizer:giftImageGesture];
+    
     [self addSubview:_sendLab];
     [self addSubview:_giftNameLab];
     [self addSubview:_giftContentLab];
@@ -273,6 +281,29 @@ static NSString *const kBreathAnimationName = @"BreathAnimationName";
     [_giftHaveView addSubview:_giftRotateImage];
     [_giftHaveView addSubview:_giftHaveImage];
     [_giftHaveView addSubview:_giftHaveMultipleLabel];
+}
+
+- (void)senderHeadTapped:(UITapGestureRecognizer *)gesture {
+    NSLog(@"senderHeadTapped tapped!");
+    
+    NSDictionary *message = @{
+        @"user_id": self.model.senderUserId,
+        @"portrait": self.model.senderHead,
+        @"nickName": self.model.senderName,
+        @"nowType": @(2)
+    };
+
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"roomWebEvocation" object:nil userInfo:message];
+}
+
+- (void)giftImageTapped:(UITapGestureRecognizer *)gesture {
+    NSLog(@"giftImageTapped tapped!");
+    NSDictionary *message = @{
+        @"nowType": @(self.model.nowType),
+        @"gift_id": self.model.giftUid
+    };
+
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"roomGiftQueueEvocation" object:nil userInfo:message];
 }
 
 - (void)setModel:(PioerQueueGiftData *)model {
@@ -286,10 +317,13 @@ static NSString *const kBreathAnimationName = @"BreathAnimationName";
     [_giftImageView sd_setImageWithURL:[NSURL URLWithString:_model.giftImage] placeholderImage:[UIImage imageNamed:@"pioer_feed_placehold"]];
     _giftHaveView.hidden = NO;
     if (_model.nowType != 1) { //礼物类型 1幸运礼物 0礼物其他
+        _bgImageView.image = [UIImage imageNamed:@"icon_ChatS_JPGiftAnimationBgImg"];
         _giftHaveMultipleLabel.hidden = YES;
         _giftRotateImage.hidden = YES;
         [self removeTransFormAnimation:_giftRotateImage];
         _giftHaveImage.hidden = YES;
+    } else {
+        _bgImageView.image = [UIImage imageNamed:@"icon_ChatS_GiftAnimationBgImg"];
     }
     //    NSLog(@"1打印坐标 x=%f  y=%f ",_originFrame.origin.x, _originFrame.origin.y);
     //    NSLog(@"2打印坐标 x=%f  y=%f ",self.x, self.y);
