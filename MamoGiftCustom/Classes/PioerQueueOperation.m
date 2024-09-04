@@ -6,6 +6,7 @@
 //
 
 #import "PioerQueueOperation.h"
+#import "PioerQueueClass.h"
 #define  KWidth [[UIScreen mainScreen] bounds].size.width
 #define  kHeight [[UIScreen mainScreen] bounds].size.height
 //参考的屏幕宽度和高度 - 适配尺寸
@@ -39,8 +40,6 @@
     if (self) {
         _executing = NO;
         _finished  = NO;
-        
-        
     }
     return self;
 }
@@ -67,24 +66,59 @@
     self.executing = YES;
     
     [[NSOperationQueue mainQueue] addOperationWithBlock:^{
-    
-        self.presentView.model = self.model;
-        self.presentView.parabolaView = self.listView;
-        if (self.index % 4 == 0) {
-            self.presentView.frame = CGRectMake(-20, (kHeight - 40) / 2 - 30 , self.listView.frame.size.width / 2 + 40, 40);
-        } else if (self.index % 4 == 1) {
-            self.presentView.frame = CGRectMake(-20, (kHeight - 40) / 2 - 30 - 60 , self.listView.frame.size.width / 2 + 40, 40);
-        } else if (self.index % 4 == 2) {
+//        NSLog(@"查看当前送礼人数 = %ld", (long)self.index);
+        if (![PioerQueueClass firstQueueInUse]) {
+            [PioerQueueClass setFirstQueueInUse: YES];
+            self.presentView.nowQueue = 0;
             self.presentView.frame = CGRectMake(-20, (kHeight - 40) / 2 - 30 + 60 , self.listView.frame.size.width / 2 + 40, 40);
-        } else if (self.index % 4 == 3) {
+//            self.presentView.frame = CGRectMake(-20, (kHeight - 40) / 2 - 30 , self.listView.frame.size.width / 2 + 40, 40);
+        } 
+        else if ( ![PioerQueueClass secondQueueInUse]) {
+            [PioerQueueClass setSecondQueueInUse: YES];
+            self.presentView.nowQueue = 1;
+            self.presentView.frame = CGRectMake(-20, (kHeight - 40) / 2 - 30 , self.listView.frame.size.width / 2 + 40, 40);
+//            self.presentView.frame = CGRectMake(-20, (kHeight - 40) / 2 - 30 - 60 , self.listView.frame.size.width / 2 + 40, 40);
+        } 
+        else if ( ![PioerQueueClass thirdQueueInUse]) {
+            [PioerQueueClass setThirdQueueInUse: YES];
+            self.presentView.nowQueue = 2;
+            self.presentView.frame = CGRectMake(-20, (kHeight - 40) / 2 - 30 - 60 , self.listView.frame.size.width / 2 + 40, 40);
+//            self.presentView.frame = CGRectMake(-20, (kHeight - 40) / 2 - 30 + 60 , self.listView.frame.size.width / 2 + 40, 40);
+        } 
+        else if ( ![PioerQueueClass fourQueueInUse]) {
+            [PioerQueueClass setFourQueueInUse: YES];
+            self.presentView.nowQueue = 3;
             self.presentView.frame = CGRectMake(-20, (kHeight - 40) / 2 - 30 - 120 , self.listView.frame.size.width / 2 + 40, 40);
+//            self.presentView.frame = CGRectMake(-20, (kHeight - 40) / 2 - 30 - 120 , self.listView.frame.size.width / 2 + 40, 40);
         }
+//        if (self.index % 4 == 0) {
+//            self.presentView.frame = CGRectMake(-20, (kHeight - 40) / 2 - 30 , self.listView.frame.size.width / 2 + 40, 40);
+//        } else if (self.index % 4 == 1) {
+//            self.presentView.frame = CGRectMake(-20, (kHeight - 40) / 2 - 30 - 60 , self.listView.frame.size.width / 2 + 40, 40);
+//        } else if (self.index % 4 == 2) {
+//            self.presentView.frame = CGRectMake(-20, (kHeight - 40) / 2 - 30 + 60 , self.listView.frame.size.width / 2 + 40, 40);
+//        } else if (self.index % 4 == 3) {
+//            self.presentView.frame = CGRectMake(-20, (kHeight - 40) / 2 - 30 - 120 , self.listView.frame.size.width / 2 + 40, 40);
+//        }
 
         
-       self.presentView.originFrame = self.presentView.frame;
+        self.presentView.originFrame = self.presentView.frame;
        [self.listView addSubview:self.presentView];
+        self.presentView.parabolaView = self.listView;
+        self.presentView.model = self.model;
         
-        [self.presentView animateWithCompleteBlock:^(BOOL finished,NSInteger finishCount) {
+        [self.presentView animateWithCompleteBlock:^(BOOL finished,NSInteger finishCount,NSInteger nowQueue) {
+            NSLog(@"动画结束视图已移除 = %ld", nowQueue);
+            if (nowQueue == 0) {
+                [PioerQueueClass setFirstQueueInUse: NO];
+            } else if (nowQueue == 1) {
+                [PioerQueueClass setSecondQueueInUse: NO];
+            } else if (nowQueue == 2) {
+                [PioerQueueClass setThirdQueueInUse: NO];
+            } else if (nowQueue == 3) {
+                [PioerQueueClass setFourQueueInUse: NO];
+            }
+            
             self.finished = finished;
             self.finishedBlock(finished,finishCount);
         }];

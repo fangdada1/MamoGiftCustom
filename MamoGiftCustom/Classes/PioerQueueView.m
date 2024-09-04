@@ -28,7 +28,6 @@ static NSString *const kBreathAnimationName = @"BreathAnimationName";
 @property (nonatomic,strong) UIImageView *giftImageView; // 礼物icon
 @property (nonatomic,assign) NSInteger giftCount; // 礼物个数
 @property (nonatomic,strong) NSTimer *timer;
-
 //礼物中奖视图
 @property (nonatomic,strong) UIView *giftHaveView;
 @property (nonatomic,strong) UIImageView *giftHaveImage;
@@ -36,8 +35,9 @@ static NSString *const kBreathAnimationName = @"BreathAnimationName";
 @property (nonatomic,strong) UILabel *giftHaveMultipleLabel;
 
 @property (nonatomic,strong) AVAudioPlayer *audioPlayer;
+@property (nonatomic,strong) AVAudioPlayer *boxAudioPlayer; // 盲盒音效播放
 
-@property (nonatomic,copy) void(^completeBlock)(BOOL finished, NSInteger finishCount); // 新增了回调参数 finishCount， 用来记录动画结束时累加数量，将来在3秒内，还能继续累加
+@property (nonatomic,copy) void(^completeBlock)(BOOL finished, NSInteger finishCount, NSInteger nowQueue); // 新增了回调参数 finishCount， 用来记录动画结束时累加数量，将来在3秒内，还能继续累加
 
 //@property (nonatomic,strong) SVGAParser *svgaparser;
 //@property (nonatomic,strong) SVGAPlayer *svgaPlayer;
@@ -67,7 +67,8 @@ static NSString *const kBreathAnimationName = @"BreathAnimationName";
         
         [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(hidePresendView) object:nil];//可以取消成功。
         [self performSelector:@selector(hidePresendView) withObject:nil afterDelay:3];
-        self.giftShakeLab.text = [NSString stringWithFormat:@"X%ld",self.animCount];
+        self.giftShakeLab.text = [NSString stringWithFormat:@"                    X%ld                    ",self.animCount];
+//        self.giftShakeLab.text = [NSString stringWithFormat:@"X%ld",self.animCount];
         [self.giftShakeLab startAnimWithDuration:0.3];
         
     }else{
@@ -76,7 +77,9 @@ static NSString *const kBreathAnimationName = @"BreathAnimationName";
         //        NSLog(@"加之后animCount = %ld",(long)self.animCount);
         [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(hidePresendView) object:nil];//可以取消成功。
         [self performSelector:@selector(hidePresendView) withObject:nil afterDelay:3];
-        self.giftShakeLab.text = [NSString stringWithFormat:@"X%ld",self.animCount];
+        self.giftShakeLab.text = [NSString stringWithFormat:@"                    X%ld                    ",self.animCount];
+//        self.giftShakeLab.text = [NSString stringWithFormat:@"X%ld",self.animCount];
+
         [self.giftShakeLab startAnimWithDuration:0.3];
     }
     
@@ -96,7 +99,7 @@ static NSString *const kBreathAnimationName = @"BreathAnimationName";
         } completion:^(BOOL finished) {
             if (self.completeBlock) {
                 //                NSLog(@"！1 ！finished移除队列 = %d！！", finished);
-                self.completeBlock(true, self.animCount);
+                self.completeBlock(true, self.animCount, self.nowQueue);
             }
             [self reset];
             self.finished = finished;
@@ -137,7 +140,7 @@ static NSString *const kBreathAnimationName = @"BreathAnimationName";
     self.alpha = 0;
     if (self.completeBlock) {
         
-        self.completeBlock(true, self.animCount);
+        self.completeBlock(true, self.animCount, self.nowQueue);
     }
     [self reset];
     self.finished = true;
@@ -175,18 +178,17 @@ static NSString *const kBreathAnimationName = @"BreathAnimationName";
     [_giftNameLab sizeThatFits: CGSizeMake(60, 17)];
     _giftNameLab.top = 5;
     
-    _giftContentLab.frame = CGRectMake(50, 20, 80, 17);
-    [_giftContentLab sizeThatFits: CGSizeMake(60, 17)];
+    _giftContentLab.frame = CGRectMake(50, 20, 72, 17);
+    [_giftContentLab sizeThatFits: CGSizeMake(52, 17)];
     _giftContentLab.top = 20;
     
     // 初始化动画label
     _giftShakeLab =  [[PioerQueueShake alloc] init];
-    _giftShakeLab.frame = CGRectMake(112, -30, 200, 100);
+    _giftShakeLab.frame = CGRectMake(50, -30, 300, 100);
     _giftShakeLab.font = [UIFont systemFontOfSize:28];
     _giftShakeLab.borderColor = [UIColor colorWithHexString:@"#D64A2C"];
     _giftShakeLab.textColor = [UIColor colorWithHexString:@"#FFDD2B"];
-    _giftShakeLab.textAlignment = NSTextAlignmentCenter;
-    
+//    _giftShakeLab.textAlignment = NSTextAlignmentCenter;
     NSArray *colors = @[(id)[UIColor colorWithHexString:@"#FF099C"].CGColor, (id)[UIColor colorWithHexString:@"#FFDD2B"].CGColor];
     for (CALayer *sublayer in self.layer.sublayers) {
         if ([sublayer isKindOfClass:[CAGradientLayer class]]) {
@@ -203,10 +205,9 @@ static NSString *const kBreathAnimationName = @"BreathAnimationName";
     
     gradientLayer.mask = _giftShakeLab.layer;
     _giftShakeLab.frame = gradientLayer.bounds;
-    
-    _giftImageView.frame = CGRectMake(116, 0, 40, 40);
+    _giftImageView.frame = CGRectMake(116, -5, 50, 50);
     _giftImageView.userInteractionEnabled = YES;
-    
+    [self startPulsingAnimation];
 }
 
 #pragma mark 初始化 UI
@@ -246,7 +247,6 @@ static NSString *const kBreathAnimationName = @"BreathAnimationName";
     //礼物icon
     _giftImageView = [[UIImageView alloc] init];
     
-    
     //礼物name
     _giftNameLab = [[UILabel alloc] init];
     _giftNameLab.textColor  = [UIColor whiteColor];
@@ -264,7 +264,7 @@ static NSString *const kBreathAnimationName = @"BreathAnimationName";
     [self addSubview:_bgImageView];
     [self addSubview:_senderHead];
     [self addSubview:_giftImageView];
-    
+
     UITapGestureRecognizer *headGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(senderHeadTapped:)];
     [_senderHead addGestureRecognizer:headGesture];
     
@@ -332,7 +332,8 @@ static NSString *const kBreathAnimationName = @"BreathAnimationName";
     //    [self makeparabolaAnimation];
     //    NSLog(@"当前中奖用户id = \(%@)", model.senderUserId);
     //    NSLog(@"当前自己用户id = \(%@)", [[NSUserDefaults standardUserDefaults] stringForKey:@"PioerUserIdKey"]);
-    if (model.winning_multiple > 0) { //需要显示放大缩小
+    // 非盲盒礼物
+    if (model.winning_multiple > 0 && _model.nowType != 4) { //需要显示放大缩小
         //        _giftHaveView.hidden = NO;
         //        if (![[NSUserDefaults standardUserDefaults] boolForKey:@"PioerLivingLookEffects"]) {
         //            NSLog(@"！！隐藏送礼物视图！！");
@@ -376,6 +377,12 @@ static NSString *const kBreathAnimationName = @"BreathAnimationName";
                 if (!nowRewards) {
                     [self.player play];
                     [PioerParabolaAnimations parabolaAnimationsWithX: self.x withY: self.y parabolaView: self.parabolaView];
+                    BOOL nowShake = [[NSUserDefaults standardUserDefaults] boolForKey:@"PioerLivingStopShake"];
+                    if (nowShake) {
+                        // 震动
+                        SystemSoundID sound = kSystemSoundID_Vibrate;
+                        AudioServicesPlayAlertSound(sound);
+                    }
                 }
             }
         }
@@ -385,12 +392,43 @@ static NSString *const kBreathAnimationName = @"BreathAnimationName";
         [self removeTransFormAnimation:_giftRotateImage];
         _giftHaveImage.hidden = YES;
     }
-    //    }
     
-    //    [self layoutIfNeeded];
-    //    else {
-    //        _giftHaveView.hidden = YES;
-    //    }
+    if ([model.senderUserId isEqualToString:[[NSUserDefaults standardUserDefaults] stringForKey:@"PioerUserIdKey"]] && model.blindBoxWinArr.count > 0 && model.nowType == 4) {
+        if (model.isAnchorSend != 1) {
+            BOOL nowRewards = [[NSUserDefaults standardUserDefaults] boolForKey:@"PioerLivingStopRewards"];
+            if (!nowRewards) {
+                self.boxPlayer.currentTime = 0;
+                [self.boxPlayer play];
+                [PioerParabolaAnimations boxAnimationsWithX: 140 withY: self.y parabolaView: self.parabolaView withUrls: model.blindBoxWinArr];
+            }
+            BOOL nowShake = [[NSUserDefaults standardUserDefaults] boolForKey:@"PioerLivingStopShake"];
+            if (nowShake) {
+                // 震动
+                SystemSoundID sound = kSystemSoundID_Vibrate;
+                AudioServicesPlayAlertSound(sound);
+            }
+
+        }
+    }
+    
+}
+
+- (void)startPulsingAnimation {
+    // 创建放大动画
+     CABasicAnimation *scaleUp = [CABasicAnimation animationWithKeyPath:@"transform.scale"];
+     scaleUp.fromValue = @(1.0);
+     scaleUp.toValue = @(1.2);
+     scaleUp.duration = 0.5;
+     scaleUp.autoreverses = YES; // 动画完成后反向播放
+     
+     // 创建重复动画
+     CAAnimationGroup *animationGroup = [CAAnimationGroup animation];
+     animationGroup.animations = @[scaleUp];
+     animationGroup.duration = 1.0; // 动画总时长（放大 + 缩小）
+     animationGroup.repeatCount = HUGE_VALF; // 无限重复
+     
+     // 将动画添加到图层
+     [self.giftImageView.layer addAnimation:animationGroup forKey:@"pulsing"];
 }
 
 - (void)addBreathAnimation
@@ -454,6 +492,17 @@ static NSString *const kBreathAnimationName = @"BreathAnimationName";
         _audioPlayer = player;
     }
     return _audioPlayer;
+}
+
+- (AVAudioPlayer *)boxPlayer {
+    if (!_boxAudioPlayer) {
+        NSURL *path = [[NSBundle mainBundle] URLForResource:@"living_box_open.mp3" withExtension:nil];
+        AVAudioPlayer *player = [[AVAudioPlayer alloc] initWithContentsOfURL:path error:nil];
+        player.numberOfLoops = 0;
+        [player prepareToPlay];
+        _boxAudioPlayer = player;
+    }
+    return _boxAudioPlayer;
 }
 
 

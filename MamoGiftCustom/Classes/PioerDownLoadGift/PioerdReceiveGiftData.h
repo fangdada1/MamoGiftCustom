@@ -22,6 +22,11 @@ NS_ASSUME_NONNULL_BEGIN
 ///礼物类型
 //1 SVGAPlayer播放
 @property (nullable, nonatomic, copy) NSString  *type;
+// 是否是5000倍
+@property (nonatomic, assign) BOOL isBigWin;
+@property (nullable, nonatomic, copy) NSString  *sendName;// 送礼者名称
+@property (nullable, nonatomic, copy) NSString  *sendIcon;// 送礼者头像
+@property (nullable, nonatomic, copy) NSString  *multiple;// 倍数
 
 @end
 

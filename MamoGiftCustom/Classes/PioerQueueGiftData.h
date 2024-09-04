@@ -29,6 +29,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nullable, nonatomic, copy) NSString  *updatedAt;
 //礼物类型 1幸运礼物 0礼物其他
 @property (nonatomic, assign) NSInteger  nowType;
+@property (nonatomic, strong) NSMutableArray *blindBoxWinArr;
 
 @end
 

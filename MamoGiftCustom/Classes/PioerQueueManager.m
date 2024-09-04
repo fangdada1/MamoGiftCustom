@@ -62,8 +62,10 @@ static dispatch_once_t onceToken;
                 PioerQueueOperation *op = [self.operationCache objectForKey:userID];
                 op.presentView.model = model;
                 [op.presentView shakeNumberLabel];
+//                NSLog(@"动画视图已添加 = 0被过滤");
                 return;
             }
+//            NSLog(@"动画视图已添加 = 0");
             // 没有操作缓存，创建op
             PioerQueueOperation *op = [PioerQueueOperation animOperationWithUserID:userID model:model finishedBlock:^(BOOL result,NSInteger finishCount) {
                 // 回调
@@ -92,7 +94,7 @@ static dispatch_once_t onceToken;
             
             // 将操作添加到缓存池
             [self.operationCache setObject:op forKey:userID];
-            NSLog(@"4当前moreUserCount = %d", self.moreUserCount);
+//            NSLog(@"4当前moreUserCount = %d", self.moreUserCount);
             // 根据用户ID 控制显示的位置
             if (self.moreUserCount % 4 == 0) {
                 op.presentView.frame  = CGRectMake(-self.parentView.frame.size.width / 2, (self.parentView.frame.size.height - 50) / 2, self.parentView.frame.size.width / 2, 50);//240
@@ -134,9 +136,10 @@ static dispatch_once_t onceToken;
                 PioerQueueOperation *op = [self.operationCache objectForKey:userID];
                 op.presentView.model = model;
                 [op.presentView shakeNumberLabel];
+//                NSLog(@"动画视图已添加 = 1被过滤");
                 return;
             }
-            
+//            NSLog(@"动画视图已添加 = 1");
             PioerQueueOperation *op = [PioerQueueOperation animOperationWithUserID:userID model:model finishedBlock:^(BOOL result,NSInteger finishCount) {
                 //ALog(@"finishCount = %ld",(long)finishCount);
                 // 回调
@@ -201,9 +204,11 @@ static dispatch_once_t onceToken;
         //ALog(@"0000");
         //之前没送过这个礼物
         self.moreUserCount ++;
+//        NSLog(@"动画视图已添加 = 2被过滤");
         //在有用户礼物信息时
         if ([self.userGigtInfos objectForKey:userID]) {
             //ALog(@"0000-有礼物信息");
+//            NSLog(@"动画视图已添加 = 2");
             PioerQueueOperation *op = [PioerQueueOperation animOperationWithUserID:userID model:model finishedBlock:^(BOOL result,NSInteger finishCount) {
                 // 回调
                 if (finishedBlock) {
@@ -231,7 +236,7 @@ static dispatch_once_t onceToken;
             op.index = self.moreUserCount;
             // 将操作添加到缓存池
             [self.operationCache setObject:op forKey:userID];
-            NSLog(@"2当前moreUserCount = %d", self.moreUserCount);
+//            NSLog(@"2当前moreUserCount = %d", self.moreUserCount);
             // 根据用户ID 控制显示的位置
             if (self.moreUserCount % 4 == 0) {
                 op.presentView.frame  = CGRectMake(-self.parentView.frame.size.width / 2, (self.parentView.frame.size.height - 50) / 2, self.parentView.frame.size.width / 2, 50);//240
@@ -268,6 +273,7 @@ static dispatch_once_t onceToken;
         else
         {   // 如果有操作缓存，则直接累加，不需要重新创建op
              //ALog(@"0000-没有礼物信息");
+//            NSLog(@"动画视图已添加 = 3");
             PioerQueueOperation *op = [PioerQueueOperation animOperationWithUserID:userID model:model finishedBlock:^(BOOL result,NSInteger finishCount) {
                 // 回调
                 if (finishedBlock) {
@@ -286,7 +292,7 @@ static dispatch_once_t onceToken;
             // 将操作添加到缓存池
             [self.operationCache setObject:op forKey:userID];
             op.index = self.moreUserCount;
-            NSLog(@"1当前moreUserCount = %d", self.moreUserCount);
+//            NSLog(@"1当前moreUserCount = %d", self.moreUserCount);
             // 根据用户ID 控制显示的位置
             if (self.moreUserCount % 4 == 0) {
                 op.presentView.frame  = CGRectMake(-self.parentView.frame.size.width / 2, (self.parentView.frame.size.height - 50) / 2, self.parentView.frame.size.width / 2, 50);//240

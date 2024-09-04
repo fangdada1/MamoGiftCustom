@@ -16,6 +16,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 + (void)startAnimationForIndex:(CGFloat)nowX withY:(CGFloat)nowY withIndex:(int)index parabolaSuperview:(UIView *)parabolaSuperview;
 
++ (void)boxAnimationsWithX:(CGFloat)nowX withY:(CGFloat)nowY parabolaView:(UIView *)parabolaSuperview withUrls:(NSArray *)urls;
+
 @end
 
 NS_ASSUME_NONNULL_END
