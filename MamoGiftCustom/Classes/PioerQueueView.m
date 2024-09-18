@@ -311,7 +311,7 @@ static NSString *const kBreathAnimationName = @"BreathAnimationName";
     //    if (self.superview != nil) {
     _model = model;
     
-    [_senderHead sd_setImageWithURL:[NSURL URLWithString:_model.senderHead] placeholderImage:[UIImage imageNamed:@"pioer_feed_placehold"]];
+    [_senderHead sd_setImageWithURL:[NSURL URLWithString:_model.senderHead] placeholderImage:[UIImage imageNamed:@"pioer_avatar_placehold"]];
     _giftNameLab.text = [NSString stringWithFormat:@"%@",model.senderName];
     _giftContentLab.text = [NSString stringWithFormat:@"%@",model.giftName];
     [_giftImageView sd_setImageWithURL:[NSURL URLWithString:_model.giftImage] placeholderImage:[UIImage imageNamed:@"pioer_feed_placehold"]];
