@@ -156,7 +156,7 @@ static NSString *const kBreathAnimationName = @"BreathAnimationName";
     _bgImageView.layer.cornerRadius = 20;
     _bgImageView.layer.masksToBounds = YES;
     //中奖视图
-    _giftHaveView.frame = CGRectMake(50, -20, 78, 78);
+    _giftHaveView.frame = CGRectMake(80, -20, 78, 78);
     _giftHaveView.backgroundColor = [UIColor clearColor];
     
     _giftHaveImage.frame = CGRectMake(0, 0, 78, 78);
@@ -164,7 +164,7 @@ static NSString *const kBreathAnimationName = @"BreathAnimationName";
     _giftRotateImage.frame = CGRectMake(0, 0, 78, 78);
     _giftRotateImage.hidden = YES;
     [self removeTransFormAnimation:_giftRotateImage];
-    _giftHaveMultipleLabel.frame = CGRectMake(0, 52, 78, 10);
+    _giftHaveMultipleLabel.frame = CGRectMake(0, 48, 78, 20);
     _giftHaveMultipleLabel.textAlignment = NSTextAlignmentCenter;
     
     _senderHead.frame = CGRectMake(12, 2, 36, 36);
@@ -184,7 +184,7 @@ static NSString *const kBreathAnimationName = @"BreathAnimationName";
     
     // 初始化动画label
     _giftShakeLab =  [[PioerQueueShake alloc] init];
-    _giftShakeLab.frame = CGRectMake(50, -30, 300, 100);
+    _giftShakeLab.frame = CGRectMake(70, -30, 300, 100);
     _giftShakeLab.font = [UIFont systemFontOfSize:28];
     _giftShakeLab.borderColor = [UIColor colorWithHexString:@"#D64A2C"];
     _giftShakeLab.textColor = [UIColor colorWithHexString:@"#FFDD2B"];
@@ -205,7 +205,7 @@ static NSString *const kBreathAnimationName = @"BreathAnimationName";
     
     gradientLayer.mask = _giftShakeLab.layer;
     _giftShakeLab.frame = gradientLayer.bounds;
-    _giftImageView.frame = CGRectMake(116, -5, 50, 50);
+    _giftImageView.frame = CGRectMake(136, -5, 50, 50);
     _giftImageView.userInteractionEnabled = YES;
     [self startPulsingAnimation];
 }
@@ -234,8 +234,9 @@ static NSString *const kBreathAnimationName = @"BreathAnimationName";
     
     _giftHaveMultipleLabel = [[UILabel alloc] init];
     _giftHaveMultipleLabel.text = @"x100";
-    _giftHaveMultipleLabel.font = [UIFont fontWithName:@"PingFangSC-Regular" size:8];
-    _giftHaveMultipleLabel.textColor = [UIColor yellowColor];
+    _giftHaveMultipleLabel.font = [UIFont fontWithName:@"DIN-BlackItalic" size:14];
+    _giftHaveMultipleLabel.textColor = [UIColor colorWithHexString:@"#FAFF00"];
+
     
     //赠送者头像
     _senderHead = [[UIImageView alloc] init];
@@ -313,7 +314,13 @@ static NSString *const kBreathAnimationName = @"BreathAnimationName";
     
     [_senderHead sd_setImageWithURL:[NSURL URLWithString:_model.senderHead] placeholderImage:[UIImage imageNamed:@"pioer_avatar_placehold"]];
     _giftNameLab.text = [NSString stringWithFormat:@"%@",model.senderName];
-    _giftContentLab.text = [NSString stringWithFormat:@"%@",model.giftName];
+    // 是否只送给一位 1：是 (显示送礼对象人称) 0：不是 (显示送礼礼物名称)
+    if (model.isSendOneUser != 1) {
+        _giftContentLab.text = [NSString stringWithFormat:@"%@",model.giftName];
+    } else {
+        _giftContentLab.text = [NSString stringWithFormat:@"%@",model.receiverName];
+    }
+    
     [_giftImageView sd_setImageWithURL:[NSURL URLWithString:_model.giftImage] placeholderImage:[UIImage imageNamed:@"pioer_feed_placehold"]];
     _giftHaveView.hidden = NO;
     if (_model.nowType != 1) { //礼物类型 1幸运礼物 0礼物其他
@@ -325,37 +332,25 @@ static NSString *const kBreathAnimationName = @"BreathAnimationName";
     } else {
         _bgImageView.image = [UIImage imageNamed:@"icon_ChatS_GiftAnimationBgImg"];
     }
-    //    NSLog(@"1打印坐标 x=%f  y=%f ",_originFrame.origin.x, _originFrame.origin.y);
-    //    NSLog(@"2打印坐标 x=%f  y=%f ",self.x, self.y);
-    
-    
-    //    [self makeparabolaAnimation];
-    //    NSLog(@"当前中奖用户id = \(%@)", model.senderUserId);
-    //    NSLog(@"当前自己用户id = \(%@)", [[NSUserDefaults standardUserDefaults] stringForKey:@"PioerUserIdKey"]);
     // 非盲盒礼物
     if (model.winning_multiple > 0 && _model.nowType != 4) { //需要显示放大缩小
-        //        _giftHaveView.hidden = NO;
-        //        if (![[NSUserDefaults standardUserDefaults] boolForKey:@"PioerLivingLookEffects"]) {
-        //            NSLog(@"！！隐藏送礼物视图！！");
-        //            _giftHaveView.hidden = YES;
-        //        }
         _giftHaveMultipleLabel.hidden = NO;
         _giftRotateImage.hidden = NO;
         _giftHaveImage.hidden = NO;
         CGRect currentFrame = _giftHaveMultipleLabel.frame;
         
         CGFloat newX = currentFrame.origin.x;
-        CGFloat newY = 52;
+        CGFloat newY = 48;
         //        NSLog(@"当前送礼的show_type=%d model.winning_multiple=%d",model.show_type, model.winning_multiple);
         if (model.show_type == 2) { //show_type; //2 - 250 3 - 500  其他100  动画效果
             _giftHaveMultipleLabel.text = [NSString stringWithFormat:@"x%d", model.winning_multiple]; //@"x250";
-            newY = 52;
+            newY = 48;
             _giftHaveImage.image = [UIImage imageNamed:@"live_gift_gain_250"];
             _giftRotateImage.hidden = NO;
             [self startTransFormAnimation:_giftRotateImage];
         } else if (model.show_type == 3) {
             _giftHaveMultipleLabel.text = [NSString stringWithFormat:@"x%d", model.winning_multiple];//@"x500";
-            newY = 52;
+            newY = 48;
             _giftHaveImage.image = [UIImage imageNamed:@"live_gift_gain_500"];
             _giftRotateImage.hidden = NO;
             [self startTransFormAnimation:_giftRotateImage];
@@ -363,9 +358,10 @@ static NSString *const kBreathAnimationName = @"BreathAnimationName";
             _giftRotateImage.hidden = YES;
             [self removeTransFormAnimation:_giftRotateImage];
             _giftHaveMultipleLabel.text = [NSString stringWithFormat:@"x%d", model.winning_multiple];
-            newY = 52;
+            newY = 48;
             _giftHaveImage.image = [UIImage imageNamed:@"live_gift_gain_100"];
         }
+        
         currentFrame.origin = CGPointMake(newX, newY);
         //        NSLog(@"打印新坐标x =  %f", newX);
         //        NSLog(@"打印新坐标y =  %f", newY);
@@ -399,7 +395,7 @@ static NSString *const kBreathAnimationName = @"BreathAnimationName";
             if (!nowRewards) {
                 self.boxPlayer.currentTime = 0;
                 [self.boxPlayer play];
-                [PioerParabolaAnimations boxAnimationsWithX: 140 withY: self.y parabolaView: self.parabolaView withUrls: model.blindBoxWinArr];
+                [PioerParabolaAnimations boxAnimationsWithX: 170 withY: self.y parabolaView: self.parabolaView withUrls: model.blindBoxWinArr];
             }
             BOOL nowShake = [[NSUserDefaults standardUserDefaults] boolForKey:@"PioerLivingStopShake"];
             if (nowShake) {

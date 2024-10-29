@@ -49,7 +49,8 @@ static dispatch_once_t onceToken;
 }
 
 /// 动画操作 : 需要UserID和回调
-- (void)animWithUserID:(NSString *)userID model:(PioerQueueGiftData *)model finishedBlock:(void(^)(BOOL result))finishedBlock {
+/// isMultipleRoom: 是否多人房 队列3  默认4
+- (void)animWithUserID:(NSString *)userID isMultipleRoom:(BOOL)isMultipleRoom model:(PioerQueueGiftData *)model finishedBlock:(void(^)(BOOL result))finishedBlock {
     
     //跟之前的礼物id比较
     if ([self checkIsBoolWithUserId:userID withData:self.oldUser]) {
@@ -90,40 +91,69 @@ static dispatch_once_t onceToken;
                 op.model.giftCount = op.presentView.animCount + 1;
             }
             op.listView = self.parentView;
-            op.index = self.moreUserCount % 4;
+            if (isMultipleRoom) {
+                op.index = self.moreUserCount % 3;
+            } else {
+                op.index = self.moreUserCount % 4;
+            }
             
             // 将操作添加到缓存池
             [self.operationCache setObject:op forKey:userID];
 //            NSLog(@"4当前moreUserCount = %d", self.moreUserCount);
             // 根据用户ID 控制显示的位置
-            if (self.moreUserCount % 4 == 0) {
-                op.presentView.frame  = CGRectMake(-self.parentView.frame.size.width / 2, (self.parentView.frame.size.height - 50) / 2, self.parentView.frame.size.width / 2, 50);//240
-                op.presentView.originFrame = op.presentView.frame;
-//                NSLog(@"7打印 = %f", op.presentView.frame.origin.y);
-                [self.queue2 addOperation:op];
-            } else if (self.moreUserCount % 4 == 1) {
-                
-                if (op.model.giftCount != 0) {
-                    op.presentView.frame  = CGRectMake(-self.parentView.frame.size.width / 2, (self.parentView.frame.size.height - 50) / 2 - 70, self.parentView.frame.size.width / 2, 50);//300
+            if (isMultipleRoom) { //多人房
+                if (self.moreUserCount % 3 == 0) {
+                    op.presentView.frame  = CGRectMake(-self.parentView.frame.size.width / 2, (self.parentView.frame.size.height - 50) / 2, self.parentView.frame.size.width / 2, 50);//240
                     op.presentView.originFrame = op.presentView.frame;
-//                    NSLog(@"3打印 = %f", op.presentView.frame.origin.y);
-                    [self.queue1 addOperation:op];
+    //                NSLog(@"7打印 = %f", op.presentView.frame.origin.y);
+                    [self.queue2 addOperation:op];
+                } else if (self.moreUserCount % 3 == 1) {
+                    
+                    if (op.model.giftCount != 0) {
+                        op.presentView.frame  = CGRectMake(-self.parentView.frame.size.width / 2, (self.parentView.frame.size.height - 50) / 2 - 70, self.parentView.frame.size.width / 2, 50);//300
+                        op.presentView.originFrame = op.presentView.frame;
+    //                    NSLog(@"3打印 = %f", op.presentView.frame.origin.y);
+                        [self.queue1 addOperation:op];
+                    }
+                } else if (self.moreUserCount % 3 == 2) {
+                    
+                    if (op.model.giftCount != 0) {
+                        op.presentView.frame  = CGRectMake(-self.parentView.frame.size.width / 2, (self.parentView.frame.size.height - 50) / 2 + 70, self.parentView.frame.size.width / 2, 50);//300
+                        op.presentView.originFrame = op.presentView.frame;
+    //                    NSLog(@"3打印 = %f", op.presentView.frame.origin.y);
+                        [self.queue3 addOperation:op];
+                    }
                 }
-            } else if (self.moreUserCount % 4 == 2) {
-                
-                if (op.model.giftCount != 0) {
-                    op.presentView.frame  = CGRectMake(-self.parentView.frame.size.width / 2, (self.parentView.frame.size.height - 50) / 2 + 70, self.parentView.frame.size.width / 2, 50);//300
+            } else {
+                if (self.moreUserCount % 4 == 0) {
+                    op.presentView.frame  = CGRectMake(-self.parentView.frame.size.width / 2, (self.parentView.frame.size.height - 50) / 2, self.parentView.frame.size.width / 2, 50);//240
                     op.presentView.originFrame = op.presentView.frame;
-//                    NSLog(@"3打印 = %f", op.presentView.frame.origin.y);
-                    [self.queue3 addOperation:op];
-                }
-            } else if (self.moreUserCount % 4 == 3) {
-                
-                if (op.model.giftCount != 0) {
-                    op.presentView.frame  = CGRectMake(-self.parentView.frame.size.width / 2, (self.parentView.frame.size.height - 50) / 2 - 140, self.parentView.frame.size.width / 2, 50);//300
-                    op.presentView.originFrame = op.presentView.frame;
-//                    NSLog(@"3打印 = %f", op.presentView.frame.origin.y);
-                    [self.queue4 addOperation:op];
+    //                NSLog(@"7打印 = %f", op.presentView.frame.origin.y);
+                    [self.queue2 addOperation:op];
+                } else if (self.moreUserCount % 4 == 1) {
+                    
+                    if (op.model.giftCount != 0) {
+                        op.presentView.frame  = CGRectMake(-self.parentView.frame.size.width / 2, (self.parentView.frame.size.height - 50) / 2 - 70, self.parentView.frame.size.width / 2, 50);//300
+                        op.presentView.originFrame = op.presentView.frame;
+    //                    NSLog(@"3打印 = %f", op.presentView.frame.origin.y);
+                        [self.queue1 addOperation:op];
+                    }
+                } else if (self.moreUserCount % 4 == 2) {
+                    
+                    if (op.model.giftCount != 0) {
+                        op.presentView.frame  = CGRectMake(-self.parentView.frame.size.width / 2, (self.parentView.frame.size.height - 50) / 2 + 70, self.parentView.frame.size.width / 2, 50);//300
+                        op.presentView.originFrame = op.presentView.frame;
+    //                    NSLog(@"3打印 = %f", op.presentView.frame.origin.y);
+                        [self.queue3 addOperation:op];
+                    }
+                } else if (self.moreUserCount % 4 == 3) {
+                    
+                    if (op.model.giftCount != 0) {
+                        op.presentView.frame  = CGRectMake(-self.parentView.frame.size.width / 2, (self.parentView.frame.size.height - 50) / 2 - 140, self.parentView.frame.size.width / 2, 50);//300
+                        op.presentView.originFrame = op.presentView.frame;
+    //                    NSLog(@"3打印 = %f", op.presentView.frame.origin.y);
+                        [self.queue4 addOperation:op];
+                    }
                 }
             }
         }
@@ -157,7 +187,12 @@ static dispatch_once_t onceToken;
             op.listView = self.parentView;
             // 将操作添加到缓存池
             [self.operationCache setObject:op forKey:userID];
-            op.index = self.moreUserCount % 4;
+//            op.index = self.moreUserCount % 4;
+            if (isMultipleRoom) {
+                op.index = self.moreUserCount % 3;
+            } else {
+                op.index = self.moreUserCount % 4;
+            }
 //            NSLog(@"3当前moreUserCount = %d", self.moreUserCount);
 //            NSLog(@"3当前op.model.giftCount = %ld", (long)op.model.giftCount);
             /*
@@ -165,36 +200,62 @@ static dispatch_once_t onceToken;
              2024-05-17 13:43:17.893840+0800 Pioer[1476:53259] 3当前op.model.giftCount = 50
              */
             // 根据用户ID 控制显示的位置
-            if (self.moreUserCount % 4 == 0) {
-                op.presentView.frame  = CGRectMake(-self.parentView.frame.size.width / 2, (self.parentView.frame.size.height - 50) / 2, self.parentView.frame.size.width / 2, 50);//240
-                op.presentView.originFrame = op.presentView.frame;
-//                NSLog(@"7打印 = %f", op.presentView.frame.origin.y);
-                [self.queue2 addOperation:op];
-            } else if (self.moreUserCount % 4 == 1) {
-                
-                if (op.model.giftCount != 0) {
-                    op.presentView.frame  = CGRectMake(-self.parentView.frame.size.width / 2, (self.parentView.frame.size.height - 50) / 2 - 70, self.parentView.frame.size.width / 2, 50);//300
+            if (isMultipleRoom) { //多人房
+                if (self.moreUserCount % 3 == 0) {
+                    op.presentView.frame  = CGRectMake(-self.parentView.frame.size.width / 2, (self.parentView.frame.size.height - 50) / 2, self.parentView.frame.size.width / 2, 50);//240
                     op.presentView.originFrame = op.presentView.frame;
-//                    NSLog(@"3打印 = %f", op.presentView.frame.origin.y);
-                    [self.queue1 addOperation:op];
+    //                NSLog(@"7打印 = %f", op.presentView.frame.origin.y);
+                    [self.queue2 addOperation:op];
+                } else if (self.moreUserCount % 3 == 1) {
+                    
+                    if (op.model.giftCount != 0) {
+                        op.presentView.frame  = CGRectMake(-self.parentView.frame.size.width / 2, (self.parentView.frame.size.height - 50) / 2 - 70, self.parentView.frame.size.width / 2, 50);//300
+                        op.presentView.originFrame = op.presentView.frame;
+    //                    NSLog(@"3打印 = %f", op.presentView.frame.origin.y);
+                        [self.queue1 addOperation:op];
+                    }
+                } else if (self.moreUserCount % 3 == 2) {
+                    
+                    if (op.model.giftCount != 0) {
+                        op.presentView.frame  = CGRectMake(-self.parentView.frame.size.width / 2, (self.parentView.frame.size.height - 50) / 2 + 70, self.parentView.frame.size.width / 2, 50);//300
+                        op.presentView.originFrame = op.presentView.frame;
+    //                    NSLog(@"3打印 = %f", op.presentView.frame.origin.y);
+                        [self.queue3 addOperation:op];
+                    }
                 }
-            } else if (self.moreUserCount % 4 == 2) {
-                
-                if (op.model.giftCount != 0) {
-                    op.presentView.frame  = CGRectMake(-self.parentView.frame.size.width / 2, (self.parentView.frame.size.height - 50) / 2 + 70, self.parentView.frame.size.width / 2, 50);//300
+            } else {
+                if (self.moreUserCount % 4 == 0) {
+                    op.presentView.frame  = CGRectMake(-self.parentView.frame.size.width / 2, (self.parentView.frame.size.height - 50) / 2, self.parentView.frame.size.width / 2, 50);//240
                     op.presentView.originFrame = op.presentView.frame;
-//                    NSLog(@"3打印 = %f", op.presentView.frame.origin.y);
-                    [self.queue3 addOperation:op];
-                }
-            } else if (self.moreUserCount % 4 == 3) {
-                
-                if (op.model.giftCount != 0) {
-                    op.presentView.frame  = CGRectMake(-self.parentView.frame.size.width / 2, (self.parentView.frame.size.height - 50) / 2 - 140, self.parentView.frame.size.width / 2, 50);//300
-                    op.presentView.originFrame = op.presentView.frame;
-//                    NSLog(@"3打印 = %f", op.presentView.frame.origin.y);
-                    [self.queue4 addOperation:op];
+    //                NSLog(@"7打印 = %f", op.presentView.frame.origin.y);
+                    [self.queue2 addOperation:op];
+                } else if (self.moreUserCount % 4 == 1) {
+                    
+                    if (op.model.giftCount != 0) {
+                        op.presentView.frame  = CGRectMake(-self.parentView.frame.size.width / 2, (self.parentView.frame.size.height - 50) / 2 - 70, self.parentView.frame.size.width / 2, 50);//300
+                        op.presentView.originFrame = op.presentView.frame;
+    //                    NSLog(@"3打印 = %f", op.presentView.frame.origin.y);
+                        [self.queue1 addOperation:op];
+                    }
+                } else if (self.moreUserCount % 4 == 2) {
+                    
+                    if (op.model.giftCount != 0) {
+                        op.presentView.frame  = CGRectMake(-self.parentView.frame.size.width / 2, (self.parentView.frame.size.height - 50) / 2 + 70, self.parentView.frame.size.width / 2, 50);//300
+                        op.presentView.originFrame = op.presentView.frame;
+    //                    NSLog(@"3打印 = %f", op.presentView.frame.origin.y);
+                        [self.queue3 addOperation:op];
+                    }
+                } else if (self.moreUserCount % 4 == 3) {
+                    
+                    if (op.model.giftCount != 0) {
+                        op.presentView.frame  = CGRectMake(-self.parentView.frame.size.width / 2, (self.parentView.frame.size.height - 50) / 2 - 140, self.parentView.frame.size.width / 2, 50);//300
+                        op.presentView.originFrame = op.presentView.frame;
+    //                    NSLog(@"3打印 = %f", op.presentView.frame.origin.y);
+                        [self.queue4 addOperation:op];
+                    }
                 }
             }
+            
             
         }
         
@@ -238,34 +299,59 @@ static dispatch_once_t onceToken;
             [self.operationCache setObject:op forKey:userID];
 //            NSLog(@"2当前moreUserCount = %d", self.moreUserCount);
             // 根据用户ID 控制显示的位置
-            if (self.moreUserCount % 4 == 0) {
-                op.presentView.frame  = CGRectMake(-self.parentView.frame.size.width / 2, (self.parentView.frame.size.height - 50) / 2, self.parentView.frame.size.width / 2, 50);//240
-                op.presentView.originFrame = op.presentView.frame;
-//                NSLog(@"7打印 = %f", op.presentView.frame.origin.y);
-                [self.queue2 addOperation:op];
-            } else if (self.moreUserCount % 4 == 1) {
-                
-                if (op.model.giftCount != 0) {
-                    op.presentView.frame  = CGRectMake(-self.parentView.frame.size.width / 2, (self.parentView.frame.size.height - 50) / 2 - 70, self.parentView.frame.size.width / 2, 50);//300
+            if (isMultipleRoom) { //多人房
+                if (self.moreUserCount % 3 == 0) {
+                    op.presentView.frame  = CGRectMake(-self.parentView.frame.size.width / 2, (self.parentView.frame.size.height - 50) / 2, self.parentView.frame.size.width / 2, 50);//240
                     op.presentView.originFrame = op.presentView.frame;
-//                    NSLog(@"3打印 = %f", op.presentView.frame.origin.y);
-                    [self.queue1 addOperation:op];
+    //                NSLog(@"7打印 = %f", op.presentView.frame.origin.y);
+                    [self.queue2 addOperation:op];
+                } else if (self.moreUserCount % 3 == 1) {
+                    
+                    if (op.model.giftCount != 0) {
+                        op.presentView.frame  = CGRectMake(-self.parentView.frame.size.width / 2, (self.parentView.frame.size.height - 50) / 2 - 70, self.parentView.frame.size.width / 2, 50);//300
+                        op.presentView.originFrame = op.presentView.frame;
+    //                    NSLog(@"3打印 = %f", op.presentView.frame.origin.y);
+                        [self.queue1 addOperation:op];
+                    }
+                } else if (self.moreUserCount % 3 == 2) {
+                    
+                    if (op.model.giftCount != 0) {
+                        op.presentView.frame  = CGRectMake(-self.parentView.frame.size.width / 2, (self.parentView.frame.size.height - 50) / 2 + 70, self.parentView.frame.size.width / 2, 50);//300
+                        op.presentView.originFrame = op.presentView.frame;
+    //                    NSLog(@"3打印 = %f", op.presentView.frame.origin.y);
+                        [self.queue3 addOperation:op];
+                    }
                 }
-            } else if (self.moreUserCount % 4 == 2) {
-                
-                if (op.model.giftCount != 0) {
-                    op.presentView.frame  = CGRectMake(-self.parentView.frame.size.width / 2, (self.parentView.frame.size.height - 50) / 2 + 70, self.parentView.frame.size.width / 2, 50);//300
+            } else {
+                if (self.moreUserCount % 4 == 0) {
+                    op.presentView.frame  = CGRectMake(-self.parentView.frame.size.width / 2, (self.parentView.frame.size.height - 50) / 2, self.parentView.frame.size.width / 2, 50);//240
                     op.presentView.originFrame = op.presentView.frame;
-//                    NSLog(@"3打印 = %f", op.presentView.frame.origin.y);
-                    [self.queue3 addOperation:op];
-                }
-            } else if (self.moreUserCount % 4 == 3) {
-                
-                if (op.model.giftCount != 0) {
-                    op.presentView.frame  = CGRectMake(-self.parentView.frame.size.width / 2, (self.parentView.frame.size.height - 50) / 2 - 140, self.parentView.frame.size.width / 2, 50);//300
-                    op.presentView.originFrame = op.presentView.frame;
-//                    NSLog(@"3打印 = %f", op.presentView.frame.origin.y);
-                    [self.queue4 addOperation:op];
+    //                NSLog(@"7打印 = %f", op.presentView.frame.origin.y);
+                    [self.queue2 addOperation:op];
+                } else if (self.moreUserCount % 4 == 1) {
+                    
+                    if (op.model.giftCount != 0) {
+                        op.presentView.frame  = CGRectMake(-self.parentView.frame.size.width / 2, (self.parentView.frame.size.height - 50) / 2 - 70, self.parentView.frame.size.width / 2, 50);//300
+                        op.presentView.originFrame = op.presentView.frame;
+    //                    NSLog(@"3打印 = %f", op.presentView.frame.origin.y);
+                        [self.queue1 addOperation:op];
+                    }
+                } else if (self.moreUserCount % 4 == 2) {
+                    
+                    if (op.model.giftCount != 0) {
+                        op.presentView.frame  = CGRectMake(-self.parentView.frame.size.width / 2, (self.parentView.frame.size.height - 50) / 2 + 70, self.parentView.frame.size.width / 2, 50);//300
+                        op.presentView.originFrame = op.presentView.frame;
+    //                    NSLog(@"3打印 = %f", op.presentView.frame.origin.y);
+                        [self.queue3 addOperation:op];
+                    }
+                } else if (self.moreUserCount % 4 == 3) {
+                    
+                    if (op.model.giftCount != 0) {
+                        op.presentView.frame  = CGRectMake(-self.parentView.frame.size.width / 2, (self.parentView.frame.size.height - 50) / 2 - 140, self.parentView.frame.size.width / 2, 50);//300
+                        op.presentView.originFrame = op.presentView.frame;
+    //                    NSLog(@"3打印 = %f", op.presentView.frame.origin.y);
+                        [self.queue4 addOperation:op];
+                    }
                 }
             }
         }
@@ -294,36 +380,62 @@ static dispatch_once_t onceToken;
             op.index = self.moreUserCount;
 //            NSLog(@"1当前moreUserCount = %d", self.moreUserCount);
             // 根据用户ID 控制显示的位置
-            if (self.moreUserCount % 4 == 0) {
-                op.presentView.frame  = CGRectMake(-self.parentView.frame.size.width / 2, (self.parentView.frame.size.height - 50) / 2, self.parentView.frame.size.width / 2, 50);//240
-                op.presentView.originFrame = op.presentView.frame;
-//                NSLog(@"7打印 = %f", op.presentView.frame.origin.y);
-                [self.queue2 addOperation:op];
-            } else if (self.moreUserCount % 4 == 1) {
-                
-                if (op.model.giftCount != 0) {
-                    op.presentView.frame  = CGRectMake(-self.parentView.frame.size.width / 2, (self.parentView.frame.size.height - 50) / 2 - 70, self.parentView.frame.size.width / 2, 50);//300
+            if (isMultipleRoom) { //多人房
+                if (self.moreUserCount % 3 == 0) {
+                    op.presentView.frame  = CGRectMake(-self.parentView.frame.size.width / 2, (self.parentView.frame.size.height - 50) / 2, self.parentView.frame.size.width / 2, 50);//240
                     op.presentView.originFrame = op.presentView.frame;
-//                    NSLog(@"3打印 = %f", op.presentView.frame.origin.y);
-                    [self.queue1 addOperation:op];
+    //                NSLog(@"7打印 = %f", op.presentView.frame.origin.y);
+                    [self.queue2 addOperation:op];
+                } else if (self.moreUserCount % 3 == 1) {
+                    
+                    if (op.model.giftCount != 0) {
+                        op.presentView.frame  = CGRectMake(-self.parentView.frame.size.width / 2, (self.parentView.frame.size.height - 50) / 2 - 70, self.parentView.frame.size.width / 2, 50);//300
+                        op.presentView.originFrame = op.presentView.frame;
+    //                    NSLog(@"3打印 = %f", op.presentView.frame.origin.y);
+                        [self.queue1 addOperation:op];
+                    }
+                } else if (self.moreUserCount % 3 == 2) {
+                    
+                    if (op.model.giftCount != 0) {
+                        op.presentView.frame  = CGRectMake(-self.parentView.frame.size.width / 2, (self.parentView.frame.size.height - 50) / 2 + 70, self.parentView.frame.size.width / 2, 50);//300
+                        op.presentView.originFrame = op.presentView.frame;
+    //                    NSLog(@"3打印 = %f", op.presentView.frame.origin.y);
+                        [self.queue3 addOperation:op];
+                    }
                 }
-            } else if (self.moreUserCount % 4 == 2) {
-                
-                if (op.model.giftCount != 0) {
-                    op.presentView.frame  = CGRectMake(-self.parentView.frame.size.width / 2, (self.parentView.frame.size.height - 50) / 2 + 70, self.parentView.frame.size.width / 2, 50);//300
+            } else {
+                if (self.moreUserCount % 4 == 0) {
+                    op.presentView.frame  = CGRectMake(-self.parentView.frame.size.width / 2, (self.parentView.frame.size.height - 50) / 2, self.parentView.frame.size.width / 2, 50);//240
                     op.presentView.originFrame = op.presentView.frame;
-//                    NSLog(@"3打印 = %f", op.presentView.frame.origin.y);
-                    [self.queue3 addOperation:op];
-                }
-            } else if (self.moreUserCount % 4 == 3) {
-                
-                if (op.model.giftCount != 0) {
-                    op.presentView.frame  = CGRectMake(-self.parentView.frame.size.width / 2, (self.parentView.frame.size.height - 50) / 2 - 140, self.parentView.frame.size.width / 2, 50);//300
-                    op.presentView.originFrame = op.presentView.frame;
-//                    NSLog(@"3打印 = %f", op.presentView.frame.origin.y);
-                    [self.queue4 addOperation:op];
+    //                NSLog(@"7打印 = %f", op.presentView.frame.origin.y);
+                    [self.queue2 addOperation:op];
+                } else if (self.moreUserCount % 4 == 1) {
+                    
+                    if (op.model.giftCount != 0) {
+                        op.presentView.frame  = CGRectMake(-self.parentView.frame.size.width / 2, (self.parentView.frame.size.height - 50) / 2 - 70, self.parentView.frame.size.width / 2, 50);//300
+                        op.presentView.originFrame = op.presentView.frame;
+    //                    NSLog(@"3打印 = %f", op.presentView.frame.origin.y);
+                        [self.queue1 addOperation:op];
+                    }
+                } else if (self.moreUserCount % 4 == 2) {
+                    
+                    if (op.model.giftCount != 0) {
+                        op.presentView.frame  = CGRectMake(-self.parentView.frame.size.width / 2, (self.parentView.frame.size.height - 50) / 2 + 70, self.parentView.frame.size.width / 2, 50);//300
+                        op.presentView.originFrame = op.presentView.frame;
+    //                    NSLog(@"3打印 = %f", op.presentView.frame.origin.y);
+                        [self.queue3 addOperation:op];
+                    }
+                } else if (self.moreUserCount % 4 == 3) {
+                    
+                    if (op.model.giftCount != 0) {
+                        op.presentView.frame  = CGRectMake(-self.parentView.frame.size.width / 2, (self.parentView.frame.size.height - 50) / 2 - 140, self.parentView.frame.size.width / 2, 50);//300
+                        op.presentView.originFrame = op.presentView.frame;
+    //                    NSLog(@"3打印 = %f", op.presentView.frame.origin.y);
+                        [self.queue4 addOperation:op];
+                    }
                 }
             }
+            
         }
     }
     

@@ -34,39 +34,41 @@
 //    NSLog(@"看看内容 = %@",keyWindow.rootViewController.view);
     [parabolaSuperview addSubview: parabolaView];
     [parabolaSuperview bringSubviewToFront: parabolaView];
+    
+    int newX = 120;
     // 抛物线关键帧动画
     CAKeyframeAnimation *keyframeAnimation = [CAKeyframeAnimation animationWithKeyPath:@"position"];
     CGMutablePathRef path = CGPathCreateMutable();
-    CGPathMoveToPoint(path, NULL, 90, nowY);//移动到起始点 babyView.layer.position.x, babyView.layer.position.y
+    CGPathMoveToPoint(path, NULL, newX, nowY);//移动到起始点 babyView.layer.position.x, babyView.layer.position.y
 //    CGPathMoveToPoint(path, NULL, parabolaView.layer.position.x, parabolaView.layer.position.y);//移动到起始点
 
     //当前view x = -187.500000 当前view y = 300.000000
     
     //(参数3,参数4)最高点;(参数5,参数6)中间点 (参数7,参数8)掉落最低点
     if (index == 0) {
-        CGPathAddCurveToPoint(path, NULL, 90, nowY, 280, nowY - 280, PioerOCWidth, PioerOCHeight);
+        CGPathAddCurveToPoint(path, NULL, newX, nowY, 280, nowY - 280, PioerOCWidth, PioerOCHeight);
     } else if (index == 1) {
-        CGPathAddCurveToPoint(path, NULL, 90, nowY, 380, nowY - 320, PioerOCWidth, PioerOCHeight);
+        CGPathAddCurveToPoint(path, NULL, newX, nowY, 380, nowY - 320, PioerOCWidth, PioerOCHeight);
     } else if (index == 2) {
-        CGPathAddCurveToPoint(path, NULL, 90, nowY, 330, nowY - 230, PioerOCWidth, PioerOCHeight);
+        CGPathAddCurveToPoint(path, NULL, newX, nowY, 330, nowY - 230, PioerOCWidth, PioerOCHeight);
     } else if (index == 3) {
-        CGPathAddCurveToPoint(path, NULL, 90, nowY, 400, nowY - 360, PioerOCWidth, PioerOCHeight);
+        CGPathAddCurveToPoint(path, NULL, newX, nowY, 400, nowY - 360, PioerOCWidth, PioerOCHeight);
     } else if (index == 4) {
-        CGPathAddCurveToPoint(path, NULL, 90, nowY, 230, nowY - 200 , PioerOCWidth, PioerOCHeight);
+        CGPathAddCurveToPoint(path, NULL, newX, nowY, 230, nowY - 200 , PioerOCWidth, PioerOCHeight);
     } else if (index == 5) {
-        CGPathAddCurveToPoint(path, NULL, 90, nowY, 430, nowY - 290, PioerOCWidth, PioerOCHeight);
+        CGPathAddCurveToPoint(path, NULL, newX, nowY, 430, nowY - 290, PioerOCWidth, PioerOCHeight);
     } else if (index == 6) {
-        CGPathAddCurveToPoint(path, NULL, 90, nowY, 310, nowY - 230, PioerOCWidth, PioerOCHeight);
+        CGPathAddCurveToPoint(path, NULL, newX, nowY, 310, nowY - 230, PioerOCWidth, PioerOCHeight);
     } else if (index == 7) {
-        CGPathAddCurveToPoint(path, NULL, 90, nowY, 200, nowY - 290, PioerOCWidth, PioerOCHeight);
+        CGPathAddCurveToPoint(path, NULL, newX, nowY, 200, nowY - 290, PioerOCWidth, PioerOCHeight);
     } else if (index == 8) {
-        CGPathAddCurveToPoint(path, NULL, 90, nowY, 380, nowY - 330, PioerOCWidth, PioerOCHeight);
+        CGPathAddCurveToPoint(path, NULL, newX, nowY, 380, nowY - 330, PioerOCWidth, PioerOCHeight);
     } else if (index == 9) {
-        CGPathAddCurveToPoint(path, NULL, 90, nowY, 190, nowY - 300, PioerOCWidth, PioerOCHeight);
+        CGPathAddCurveToPoint(path, NULL, newX, nowY, 190, nowY - 300, PioerOCWidth, PioerOCHeight);
     } else if (index == 10) {
-        CGPathAddCurveToPoint(path, NULL, 90, nowY, 270, nowY - 370, PioerOCWidth, PioerOCHeight);
+        CGPathAddCurveToPoint(path, NULL, newX, nowY, 270, nowY - 370, PioerOCWidth, PioerOCHeight);
     } else if (index == 11) {
-        CGPathAddCurveToPoint(path, NULL, 90, nowY, 450, nowY - 230, PioerOCWidth, PioerOCHeight);
+        CGPathAddCurveToPoint(path, NULL, newX, nowY, 450, nowY - 230, PioerOCWidth, PioerOCHeight);
     }
     
     keyframeAnimation.path = path;

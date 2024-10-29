@@ -13,6 +13,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic,copy) NSString * _Nullable senderHead; // 送礼物者头像
 @property (nonatomic,copy) NSString * _Nullable senderName; // 送礼物者Name
+@property (nonatomic,copy) NSString * _Nullable receiverName; // 收礼物者Name
 @property (nonatomic,copy) NSString * _Nullable senderUserId; // 送礼物者id
 
 @property (nonatomic,assign) int isAnchorSend; // 是否是主播端送 1：是 0：不是
@@ -25,6 +26,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic,assign)NSInteger show_type; //2 - 250 3 - 500  其他100  动画效果
 @property (nonatomic,assign)int winning_multiple; //倍数 > 0显示 100 250 500
+@property (nonatomic,assign) int isSendOneUser; // 是否只送给一位 1：是 (显示送礼对象人称) 0：不是 (显示送礼礼物名称)
 
 @property (nullable, nonatomic, copy) NSString  *updatedAt;
 //礼物类型 1幸运礼物 0礼物其他
