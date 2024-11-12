@@ -44,7 +44,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 
 /// 动画操作 : 需要UserID和回调
-- (void)animWithUserID:(NSString *)userID isMultipleRoom:(BOOL)isMultipleRoom model:(PioerQueueGiftData *)model finishedBlock:(void(^)(BOOL result))finishedBlock;
+- (void)animWithUserID:(NSString *)userID isMultipleRoom:(BOOL)isMultipleRoom giftBottom:(int)giftBottom model:(PioerQueueGiftData *)model finishedBlock:(void(^)(BOOL result))finishedBlock;
 
 /// 取消上一次的动画操作
 - (void)cancelOperationWithLastUserID:(NSString *)userID;

@@ -54,29 +54,26 @@
     self.executing = YES;
     
     [[NSOperationQueue mainQueue] addOperationWithBlock:^{
-//        NSLog(@"查看当前送礼人数 = %ld", (long)self.index);
+        NSLog(@"查看当前送礼下标 = %d", self.giftBottom);
         if (![PioerQueueClass firstQueueInUse]) {
             [PioerQueueClass setFirstQueueInUse: YES];
             self.presentView.nowQueue = 0;
-            self.presentView.frame = CGRectMake(-20, (kHeight - 40) / 2 - 30 + 60 , self.listView.frame.size.width / 2 + 80, 40);
-//            self.presentView.frame = CGRectMake(-20, (kHeight - 40) / 2 - 30 , self.listView.frame.size.width / 2 + 40, 40);
-        } 
+            self.presentView.frame = CGRectMake(-20, (kHeight - self.giftBottom) - 40, self.listView.frame.size.width / 2 + 80, 40);
+        }
         else if ( ![PioerQueueClass secondQueueInUse]) {
             [PioerQueueClass setSecondQueueInUse: YES];
             self.presentView.nowQueue = 1;
-            self.presentView.frame = CGRectMake(-20, (kHeight - 40) / 2 - 30 , self.listView.frame.size.width / 2 + 80, 40);
-//            self.presentView.frame = CGRectMake(-20, (kHeight - 40) / 2 - 30 - 60 , self.listView.frame.size.width / 2 + 40, 40);
-        } 
+            self.presentView.frame = CGRectMake(-20, (kHeight - self.giftBottom) - 100 , self.listView.frame.size.width / 2 + 80, 40);
+        }
         else if ( ![PioerQueueClass thirdQueueInUse]) {
             [PioerQueueClass setThirdQueueInUse: YES];
             self.presentView.nowQueue = 2;
-            self.presentView.frame = CGRectMake(-20, (kHeight - 40) / 2 - 30 - 60 , self.listView.frame.size.width / 2 + 80, 40);
-//            self.presentView.frame = CGRectMake(-20, (kHeight - 40) / 2 - 30 + 60 , self.listView.frame.size.width / 2 + 40, 40);
-        } 
+            self.presentView.frame = CGRectMake(-20, (kHeight - self.giftBottom) - 160 , self.listView.frame.size.width / 2 + 80, 40);
+        }
         else if ( ![PioerQueueClass fourQueueInUse]) {
             [PioerQueueClass setFourQueueInUse: YES];
             self.presentView.nowQueue = 3;
-            self.presentView.frame = CGRectMake(-20, (kHeight - 40) / 2 - 30 - 120 , self.listView.frame.size.width / 2 + 80, 40);
+            self.presentView.frame = CGRectMake(-20, (kHeight - self.giftBottom) - 220, self.listView.frame.size.width / 2 + 80, 40);
         }
         
         self.presentView.originFrame = self.presentView.frame;

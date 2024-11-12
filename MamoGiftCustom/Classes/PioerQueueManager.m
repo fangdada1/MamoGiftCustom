@@ -50,7 +50,8 @@ static dispatch_once_t onceToken;
 
 /// 动画操作 : 需要UserID和回调
 /// isMultipleRoom: 是否多人房 队列3  默认4
-- (void)animWithUserID:(NSString *)userID isMultipleRoom:(BOOL)isMultipleRoom model:(PioerQueueGiftData *)model finishedBlock:(void(^)(BOOL result))finishedBlock {
+/// giftBottom礼物队列最下标
+- (void)animWithUserID:(NSString *)userID isMultipleRoom:(BOOL)isMultipleRoom giftBottom:(int)giftBottom model:(PioerQueueGiftData *)model finishedBlock:(void(^)(BOOL result))finishedBlock {
     
     //跟之前的礼物id比较
     if ([self checkIsBoolWithUserId:userID withData:self.oldUser]) {
@@ -61,6 +62,7 @@ static dispatch_once_t onceToken;
             // 如果有操作缓存，则直接累加，不需要重新创建op
             if ([self.operationCache objectForKey:userID]!=nil) {
                 PioerQueueOperation *op = [self.operationCache objectForKey:userID];
+                op.giftBottom = giftBottom;
                 op.presentView.model = model;
                 [op.presentView shakeNumberLabel];
 //                NSLog(@"动画视图已添加 = 0被过滤");
@@ -81,7 +83,7 @@ static dispatch_once_t onceToken;
                 [self.userGigtInfos removeObjectForKey:userID];
                 
             }];
-            
+            op.giftBottom = giftBottom;
             // 注意：下面两句代码是和无用户礼物信息时不同的，其余的逻辑一样
             op.presentView.animCount = [[self.userGigtInfos objectForKey:userID] integerValue];
 //            op.model.giftCount = op.presentView.animCount + 1;
@@ -164,6 +166,7 @@ static dispatch_once_t onceToken;
             // 如果有操作缓存，则直接累加，不需要重新创建op
             if ([self.operationCache objectForKey:userID] !=nil) {
                 PioerQueueOperation *op = [self.operationCache objectForKey:userID];
+                op.giftBottom = giftBottom;
                 op.presentView.model = model;
                 [op.presentView shakeNumberLabel];
 //                NSLog(@"动画视图已添加 = 1被过滤");
@@ -185,6 +188,7 @@ static dispatch_once_t onceToken;
                 [self.oldUser removeObject:userID];
             }];
             op.listView = self.parentView;
+            op.giftBottom = giftBottom;
             // 将操作添加到缓存池
             [self.operationCache setObject:op forKey:userID];
 //            op.index = self.moreUserCount % 4;
@@ -283,7 +287,7 @@ static dispatch_once_t onceToken;
                 [self.userGigtInfos removeObjectForKey:userID];
                 
             }];
-            
+            op.giftBottom = giftBottom;
             // 注意：下面两句代码是和无用户礼物信息时不同的，其余的逻辑一样
             op.presentView.animCount = [[self.userGigtInfos objectForKey:userID] integerValue];
 //            op.model.giftCount = op.presentView.animCount + 1;
@@ -374,6 +378,7 @@ static dispatch_once_t onceToken;
                 [self.oldUser removeObject:userID];
         
             }];
+            op.giftBottom = giftBottom;
             op.listView = self.parentView;
             // 将操作添加到缓存池
             [self.operationCache setObject:op forKey:userID];

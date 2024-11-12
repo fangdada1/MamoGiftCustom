@@ -18,6 +18,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic,strong) PioerQueueGiftData *model;
 @property (nonatomic,assign) NSInteger index;
 @property (nonatomic,copy) NSString *userID; // 新增用户唯一标示，记录礼物信息
+@property (nonatomic,assign) int giftBottom; //礼物下标
 
 // 回调参数增加了结束时礼物累计数
 + (instancetype)animOperationWithUserID:(NSString *)userID model:(PioerQueueGiftData *)model finishedBlock:(void(^)(BOOL result,NSInteger finishCount))finishedBlock;
