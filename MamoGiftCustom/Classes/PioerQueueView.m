@@ -156,7 +156,7 @@ static NSString *const kBreathAnimationName = @"BreathAnimationName";
     _bgImageView.layer.cornerRadius = 20;
     _bgImageView.layer.masksToBounds = YES;
     //中奖视图
-    _giftHaveView.frame = CGRectMake(80, -20, 78, 78);
+    _giftHaveView.frame = CGRectMake(60, -20, 78, 78);
     _giftHaveView.backgroundColor = [UIColor clearColor];
     
     _giftHaveImage.frame = CGRectMake(0, 0, 78, 78);
