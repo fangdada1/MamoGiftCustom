@@ -22,13 +22,13 @@ static NSString *const kBreathAnimationName = @"BreathAnimationName";
 @property (nonatomic,strong) UIImageView *bgImageView;
 @property (nonatomic,strong) UIImageView *senderHead;
 @property (nonatomic,strong) UILabel *sendLab;//显示 send
-@property (nonatomic,strong) UILabel *giftNameLab; // 送礼人物
+@property (nonatomic,strong) UILabel *giftNameLab; // 送礼人物 
 @property (nonatomic,strong) UILabel *giftContentLab; // 礼物名称
 //@property (nonatomic,strong) UILabel *giftPriceLab; // 礼物价格
 @property (nonatomic,strong) UIImageView *giftImageView; // 礼物icon
 @property (nonatomic,assign) NSInteger giftCount; // 礼物个数
 @property (nonatomic,strong) NSTimer *timer;
-//礼物中奖视图
+//礼物中奖视图 
 @property (nonatomic,strong) UIView *giftHaveView;
 @property (nonatomic,strong) UIImageView *giftHaveImage;
 @property (nonatomic,strong) UIImageView *giftRotateImage;
