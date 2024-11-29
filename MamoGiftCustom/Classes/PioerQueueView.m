@@ -22,13 +22,13 @@ static NSString *const kBreathAnimationName = @"BreathAnimationName";
 @property (nonatomic,strong) UIImageView *bgImageView;
 @property (nonatomic,strong) UIImageView *senderHead;
 @property (nonatomic,strong) UILabel *sendLab;//显示 send
-@property (nonatomic,strong) UILabel *giftNameLab; // 送礼人物 
+@property (nonatomic,strong) UILabel *giftNameLab; // 送礼人物
 @property (nonatomic,strong) UILabel *giftContentLab; // 礼物名称
 //@property (nonatomic,strong) UILabel *giftPriceLab; // 礼物价格
 @property (nonatomic,strong) UIImageView *giftImageView; // 礼物icon
 @property (nonatomic,assign) NSInteger giftCount; // 礼物个数
 @property (nonatomic,strong) NSTimer *timer;
-//礼物中奖视图 
+//礼物中奖视图
 @property (nonatomic,strong) UIView *giftHaveView;
 @property (nonatomic,strong) UIImageView *giftHaveImage;
 @property (nonatomic,strong) UIImageView *giftRotateImage;
@@ -155,6 +155,7 @@ static NSString *const kBreathAnimationName = @"BreathAnimationName";
     _bgImageView.left = 10;
     _bgImageView.layer.cornerRadius = 20;
     _bgImageView.layer.masksToBounds = YES;
+    
     //中奖视图
     _giftHaveView.frame = CGRectMake(60, -20, 78, 78);
     _giftHaveView.backgroundColor = [UIColor clearColor];
@@ -174,7 +175,6 @@ static NSString *const kBreathAnimationName = @"BreathAnimationName";
     _senderHead.contentMode = UIViewContentModeScaleAspectFill;
     
     _giftNameLab.frame = CGRectMake(50, 0, 80, 17);
-    //    _giftNameLab.width = self.width - 80;
     [_giftNameLab sizeThatFits: CGSizeMake(60, 17)];
     _giftNameLab.top = 5;
     
@@ -188,7 +188,6 @@ static NSString *const kBreathAnimationName = @"BreathAnimationName";
     _giftShakeLab.font = [UIFont systemFontOfSize:28];
     _giftShakeLab.borderColor = [UIColor colorWithHexString:@"#D64A2C"];
     _giftShakeLab.textColor = [UIColor colorWithHexString:@"#FFDD2B"];
-//    _giftShakeLab.textAlignment = NSTextAlignmentCenter;
     NSArray *colors = @[(id)[UIColor colorWithHexString:@"#FF099C"].CGColor, (id)[UIColor colorWithHexString:@"#FFDD2B"].CGColor];
     for (CALayer *sublayer in self.layer.sublayers) {
         if ([sublayer isKindOfClass:[CAGradientLayer class]]) {
