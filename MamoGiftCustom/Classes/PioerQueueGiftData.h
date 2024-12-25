@@ -15,6 +15,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic,copy) NSString * _Nullable senderName; // 送礼物者Name
 @property (nonatomic,copy) NSString * _Nullable receiverName; // 收礼物者Name
 @property (nonatomic,copy) NSString * _Nullable senderUserId; // 送礼物者id
+@property (nonatomic,assign) NSInteger senderPrivilege_type; // 送礼物者特权 9神秘人
 
 @property (nonatomic,assign) int isAnchorSend; // 是否是主播端送 1：是 0：不是
 @property (nonatomic,copy) NSString * _Nullable giftImage; // 礼物icon地址

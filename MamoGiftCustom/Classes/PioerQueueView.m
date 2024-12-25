@@ -155,7 +155,6 @@ static NSString *const kBreathAnimationName = @"BreathAnimationName";
     _bgImageView.left = 10;
     _bgImageView.layer.cornerRadius = 20;
     _bgImageView.layer.masksToBounds = YES;
-    
     //中奖视图
     _giftHaveView.frame = CGRectMake(60, -20, 78, 78);
     _giftHaveView.backgroundColor = [UIColor clearColor];
@@ -175,6 +174,7 @@ static NSString *const kBreathAnimationName = @"BreathAnimationName";
     _senderHead.contentMode = UIViewContentModeScaleAspectFill;
     
     _giftNameLab.frame = CGRectMake(50, 0, 80, 17);
+    //    _giftNameLab.width = self.width - 80;
     [_giftNameLab sizeThatFits: CGSizeMake(60, 17)];
     _giftNameLab.top = 5;
     
@@ -188,6 +188,7 @@ static NSString *const kBreathAnimationName = @"BreathAnimationName";
     _giftShakeLab.font = [UIFont systemFontOfSize:28];
     _giftShakeLab.borderColor = [UIColor colorWithHexString:@"#D64A2C"];
     _giftShakeLab.textColor = [UIColor colorWithHexString:@"#FFDD2B"];
+//    _giftShakeLab.textAlignment = NSTextAlignmentCenter;
     NSArray *colors = @[(id)[UIColor colorWithHexString:@"#FF099C"].CGColor, (id)[UIColor colorWithHexString:@"#FFDD2B"].CGColor];
     for (CALayer *sublayer in self.layer.sublayers) {
         if ([sublayer isKindOfClass:[CAGradientLayer class]]) {
@@ -290,6 +291,7 @@ static NSString *const kBreathAnimationName = @"BreathAnimationName";
         @"user_id": self.model.senderUserId,
         @"portrait": self.model.senderHead,
         @"nickName": self.model.senderName,
+        @"senderPrivilege_type":@(self.model.senderPrivilege_type),
         @"nowType": @(2)
     };
 

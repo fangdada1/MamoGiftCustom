@@ -35,7 +35,7 @@
     [parabolaSuperview addSubview: parabolaView];
     [parabolaSuperview bringSubviewToFront: parabolaView];
     
-    int newX = 120;
+    int newX = 100;
     // 抛物线关键帧动画
     CAKeyframeAnimation *keyframeAnimation = [CAKeyframeAnimation animationWithKeyPath:@"position"];
     CGMutablePathRef path = CGPathCreateMutable();
