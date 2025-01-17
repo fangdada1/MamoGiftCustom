@@ -22,6 +22,8 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic,copy) NSString * _Nullable animEffectUrl;//礼物动画地址
 @property (nonatomic,copy) NSString * _Nullable giftName; // 礼物名称
 @property (nonatomic,assign) NSInteger giftCount; // 礼物个数
+@property (nonatomic,assign) NSInteger last_combo; // 连击个数
+@property (nonatomic,assign) NSInteger show_style; //飘条的样式 1 - 5
 @property (nonatomic,copy)NSString * _Nullable giftUid;//礼物id
 @property (nonatomic,assign)int diamonds; //礼物价格
 

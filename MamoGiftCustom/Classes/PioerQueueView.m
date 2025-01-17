@@ -11,10 +11,6 @@
 #import "UIColor+CustomColor.h"
 #import <AVFoundation/AVFoundation.h>
 #import "PioerParabolaAnimations.h"
-//#import <SVGA.h>
-//#import "PioerdReceiveGiftData.h"
-//#import "PioerGiftDownloadData.h"
-//#import "PioerDownGiftConfig.h"
 static NSString *const kBreathAnimationKey  = @"BreathAnimationKey";
 static NSString *const kBreathAnimationName = @"BreathAnimationName";
 @interface PioerQueueView ()
@@ -24,7 +20,6 @@ static NSString *const kBreathAnimationName = @"BreathAnimationName";
 @property (nonatomic,strong) UILabel *sendLab;//显示 send
 @property (nonatomic,strong) UILabel *giftNameLab; // 送礼人物
 @property (nonatomic,strong) UILabel *giftContentLab; // 礼物名称
-//@property (nonatomic,strong) UILabel *giftPriceLab; // 礼物价格
 @property (nonatomic,strong) UIImageView *giftImageView; // 礼物icon
 @property (nonatomic,assign) NSInteger giftCount; // 礼物个数
 @property (nonatomic,strong) NSTimer *timer;
@@ -34,17 +29,15 @@ static NSString *const kBreathAnimationName = @"BreathAnimationName";
 @property (nonatomic,strong) UIImageView *giftRotateImage;
 @property (nonatomic,strong) UILabel *giftHaveMultipleLabel;
 
+//送礼个数视图
+@property (nonatomic,strong) UIView *sendGiftCountView;
+
 @property (nonatomic,strong) AVAudioPlayer *audioPlayer;
 @property (nonatomic,strong) AVAudioPlayer *boxAudioPlayer; // 盲盒音效播放
 
 @property (nonatomic,copy) void(^completeBlock)(BOOL finished, NSInteger finishCount, NSInteger nowQueue); // 新增了回调参数 finishCount， 用来记录动画结束时累加数量，将来在3秒内，还能继续累加
 
-//@property (nonatomic,strong) SVGAParser *svgaparser;
-//@property (nonatomic,strong) SVGAPlayer *svgaPlayer;
 @end
-//@interface PioerQueueView ()<SVGAPlayerDelegate>
-
-//@end
 
 @implementation PioerQueueView
 // 根据礼物个数播放动画
@@ -55,50 +48,74 @@ static NSString *const kBreathAnimationName = @"BreathAnimationName";
     } completion:^(BOOL finished) {
         [self shakeNumberLabel];
     }];
-    //    NSLog(@"！2 ！finished移除队列 = %@！！", completed);
     self.completeBlock = completed;
 }
 
 //MARK:-- 设置数量lab动画
 - (void)shakeNumberLabel {
     if (self.model.giftCount>1) {
-        //        NSLog(@"model.giftCount= %ld",self.model.giftCount);
-        self.animCount += self.model.giftCount;
+        long beforeCount = (long)self.animCount;
+        if (self.model.last_combo > 0) { //是否连击
+            self.animCount = self.model.last_combo;
+        } else {
+            self.animCount += self.model.giftCount;
+        }
         
+        long afterCount = (long)self.animCount;
         [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(hidePresendView) object:nil];//可以取消成功。
-        [self performSelector:@selector(hidePresendView) withObject:nil afterDelay:3];
-        self.giftShakeLab.text = [NSString stringWithFormat:@"                    X%ld                    ",self.animCount];
-//        self.giftShakeLab.text = [NSString stringWithFormat:@"X%ld",self.animCount];
-        [self.giftShakeLab startAnimWithDuration:0.3];
-        
+        [self performSelector:@selector(hidePresendView) withObject:nil afterDelay:4.7];
+        [self startAnimWithDuration:0.3 completion:^{
+            self.giftShakeLab.model = self.model;
+            [self.giftShakeLab countFrom:beforeCount
+                                     to:afterCount
+                           withDuration:0.3 alpha: false];
+        }];
     }else{
-        //        NSLog(@"加之前animCount = %ld",(long)self.animCount);
+        long beforeCount = ((long)self.animCount) < 1 ? 1 : ((long)self.animCount);
         self.animCount ++;
-        //        NSLog(@"加之后animCount = %ld",(long)self.animCount);
+        long afterCount = (long)self.animCount;
         [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(hidePresendView) object:nil];//可以取消成功。
-        [self performSelector:@selector(hidePresendView) withObject:nil afterDelay:3];
-        self.giftShakeLab.text = [NSString stringWithFormat:@"                    X%ld                    ",self.animCount];
-//        self.giftShakeLab.text = [NSString stringWithFormat:@"X%ld",self.animCount];
-
-        [self.giftShakeLab startAnimWithDuration:0.3];
+        [self performSelector:@selector(hidePresendView) withObject:nil afterDelay:4.7];
+        [self startAnimWithDuration:0.3 completion:^{
+            self.giftShakeLab.model = self.model;
+            [self.giftShakeLab countFrom:beforeCount
+                                     to:afterCount
+                            withDuration:0.3 alpha: false];
+        }];
     }
-    
 }
 
+- (void)startAnimWithDuration:(NSTimeInterval)duration completion:(void (^)(void))completion {
+    [UIView animateKeyframesWithDuration:duration delay:0 options:0 animations:^{
+        [UIView addKeyframeWithRelativeStartTime:0 relativeDuration:0 animations:^{
+            self.sendGiftCountView.transform = CGAffineTransformMakeScale(3, 3);
+        }];
+        [UIView addKeyframeWithRelativeStartTime:0.1 relativeDuration:0.8 animations:^{
+            self.sendGiftCountView.transform = CGAffineTransformMakeScale(0.7, 0.7);
+        }];
+    } completion:^(BOOL finished) {
+        [UIView animateWithDuration:0.06 delay:0 usingSpringWithDamping:0.1 initialSpringVelocity:120 options:UIViewAnimationOptionCurveEaseInOut animations:^{
+            self.sendGiftCountView.transform = CGAffineTransformIdentity;
+        } completion:^(BOOL restoreFinished) {
+            //完成回调
+            if (completion) {
+                completion();
+            }
+        }];
+    }];
+}
 
 #pragma mark -- Private Methods
 //MARK:--自动隐藏
 - (void)hidePresendView
 {
     if (self.superview != nil) {
-        //        NSLog(@"！！通知暂未移除 准备移除队列！！");
         //加个通知 移除
         [UIView animateWithDuration:0.30 delay:0 options:UIViewAnimationOptionCurveEaseOut animations:^{
             self.frame = CGRectMake(0, self.frame.origin.y - 20, self.frame.size.width, self.frame.size.height);
             self.alpha = 0;
         } completion:^(BOOL finished) {
             if (self.completeBlock) {
-                //                NSLog(@"！1 ！finished移除队列 = %d！！", finished);
                 self.completeBlock(true, self.animCount, self.nowQueue);
             }
             [self reset];
@@ -106,7 +123,6 @@ static NSString *const kBreathAnimationName = @"BreathAnimationName";
             [self removeFromSuperview];
         }];
     } else {
-        //        NSLog(@"！！已通知移除 ！！");
     }
 }
 
@@ -116,25 +132,44 @@ static NSString *const kBreathAnimationName = @"BreathAnimationName";
     self.frame = _originFrame;
     self.alpha = 1;
     self.animCount = 0;
-    self.giftShakeLab.text = @"";
+//    [self.giftShakeLab changeToNumber:@0 animated: false];
+    [self.giftShakeLab countFromZeroTo: 0 alpha:false];
 }
 
 //MARK:--初始化方法
-- (instancetype)init {
+//- (instancetype)init {
+//    if (self = [super init]) {
+//        _originFrame = self.frame;
+//        [[NSNotificationCenter defaultCenter] addObserver:self
+//                                                 selector:@selector(removeGiftViewQueue:)
+//                                                     name:@"removeGiftViewQueue"
+//                                                   object:nil];
+//        [self setUI];
+//    }
+//    return self;
+//}
+- (instancetype)initWithModel:(PioerQueueGiftData *)model {
     if (self = [super init]) {
         _originFrame = self.frame;
+        _model = model; // 保存传入的 model
+        
         [[NSNotificationCenter defaultCenter] addObserver:self
                                                  selector:@selector(removeGiftViewQueue:)
                                                      name:@"removeGiftViewQueue"
                                                    object:nil];
-        [self setUI];
+        [self setUIWithModel:model]; // 根据 model 设置 UI
     }
     return self;
 }
 
+// 旧的 init 方法可以废弃或不允许直接调用
+//- (instancetype)init {
+//    return [self initWithModel:nil]; // 或直接禁用此方法
+//}
+
+
 // 处理通知
 - (void)removeGiftViewQueue:(NSNotification *)notification {
-    //    NSLog(@"！！removeGiftViewQueue通知移除队列！！");
     //加个通知 移除
     self.frame = CGRectMake(0, self.frame.origin.y - 20, self.frame.size.width, self.frame.size.height);
     self.alpha = 0;
@@ -174,7 +209,6 @@ static NSString *const kBreathAnimationName = @"BreathAnimationName";
     _senderHead.contentMode = UIViewContentModeScaleAspectFill;
     
     _giftNameLab.frame = CGRectMake(50, 0, 80, 17);
-    //    _giftNameLab.width = self.width - 80;
     [_giftNameLab sizeThatFits: CGSizeMake(60, 17)];
     _giftNameLab.top = 5;
     
@@ -182,29 +216,6 @@ static NSString *const kBreathAnimationName = @"BreathAnimationName";
     [_giftContentLab sizeThatFits: CGSizeMake(52, 17)];
     _giftContentLab.top = 20;
     
-    // 初始化动画label
-    _giftShakeLab =  [[PioerQueueShake alloc] init];
-    _giftShakeLab.frame = CGRectMake(70, -30, 300, 100);
-    _giftShakeLab.font = [UIFont systemFontOfSize:28];
-    _giftShakeLab.borderColor = [UIColor colorWithHexString:@"#D64A2C"];
-    _giftShakeLab.textColor = [UIColor colorWithHexString:@"#FFDD2B"];
-//    _giftShakeLab.textAlignment = NSTextAlignmentCenter;
-    NSArray *colors = @[(id)[UIColor colorWithHexString:@"#FF099C"].CGColor, (id)[UIColor colorWithHexString:@"#FFDD2B"].CGColor];
-    for (CALayer *sublayer in self.layer.sublayers) {
-        if ([sublayer isKindOfClass:[CAGradientLayer class]]) {
-            [sublayer removeFromSuperlayer];
-        }
-    }
-    // 创建渐变层
-    CAGradientLayer* gradientLayer = [CAGradientLayer layer];
-    gradientLayer.frame = _giftShakeLab.frame;
-    gradientLayer.colors = colors;
-    gradientLayer.startPoint = CGPointMake(1, 0);
-    gradientLayer.endPoint = CGPointMake(1, 1);
-    [self.layer addSublayer:gradientLayer];
-    
-    gradientLayer.mask = _giftShakeLab.layer;
-    _giftShakeLab.frame = gradientLayer.bounds;
     _giftImageView.frame = CGRectMake(136, -5, 50, 50);
     _giftImageView.userInteractionEnabled = YES;
     [self startPulsingAnimation];
@@ -215,17 +226,14 @@ static NSString *const kBreathAnimationName = @"BreathAnimationName";
  左bgimg：背景图,  右 lab：x10
  背景图上：赠送者头像+giftNameLab +giftimge
  */
-- (void)setUI {
+- (void)setUIWithModel:(PioerQueueGiftData *)model {
     //背景图
     _bgImageView = [[UIImageView alloc] init];
     _bgImageView.backgroundColor = [UIColor clearColor];
-    //    _bgImageView.alpha = 0.3;
-    _bgImageView.image = [UIImage imageNamed:@"icon_ChatS_GiftAnimationBgImg"];
+    _bgImageView.image = [UIImage imageNamed:@"liveing_giftsQueue_one"];
     
     //中奖视图
     _giftHaveView = [[UIView alloc] init];
-    //    _giftHaveView.hidden = YES;
-    
     _giftHaveImage = [[UIImageView alloc] init];
     _giftHaveImage.image = [UIImage imageNamed:@"live_gift_gain_100"];
     
@@ -236,7 +244,7 @@ static NSString *const kBreathAnimationName = @"BreathAnimationName";
     _giftHaveMultipleLabel.text = @"x100";
     _giftHaveMultipleLabel.font = [UIFont fontWithName:@"DIN-BlackItalic" size:14];
     _giftHaveMultipleLabel.textColor = [UIColor colorWithHexString:@"#FAFF00"];
-
+    
     
     //赠送者头像
     _senderHead = [[UIImageView alloc] init];
@@ -265,7 +273,7 @@ static NSString *const kBreathAnimationName = @"BreathAnimationName";
     [self addSubview:_bgImageView];
     [self addSubview:_senderHead];
     [self addSubview:_giftImageView];
-
+    
     UITapGestureRecognizer *headGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(senderHeadTapped:)];
     [_senderHead addGestureRecognizer:headGesture];
     
@@ -275,13 +283,60 @@ static NSString *const kBreathAnimationName = @"BreathAnimationName";
     [self addSubview:_sendLab];
     [self addSubview:_giftNameLab];
     [self addSubview:_giftContentLab];
-    [self addSubview:_giftShakeLab];
+    
+    _sendGiftCountView = [[UIView alloc] init];
+    _sendGiftCountView.frame = CGRectMake(120, 0, 200, 40);
+    _sendGiftCountView.backgroundColor = [UIColor clearColor];
+    
+    [self addSubview:_sendGiftCountView];
+    
+    // 初始化动画label
+    //    _giftShakeLab =  [[PioerCountingLabel alloc] initWithNumber:@(1) fontSize:32 show_style:model.show_style signSetting: SignSettingSigned];
+    //    _giftShakeLab.frame = CGRectMake(20, 0, _giftShakeLab.frame.size.width, _giftShakeLab.frame.size.height);
+    //    _giftShakeLab.minRowNumber = 1;
+//    _giftShakeLab.alpha_style = 1;
+    _giftShakeLab = [[PioerCountingLabel alloc] initWithFrame:CGRectMake(75, 0, 200, 40)];
+    _giftShakeLab.textAlignment = NSTextAlignmentLeft;
+    _giftShakeLab.format = @"%d";
+    _giftShakeLab.animationDuration = 0.3;
+    _giftShakeLab.model = self.model;
+    _giftShakeLab.method = UILabelCountingMethodEaseOutBounce;
+    [_giftShakeLab countFromCurrentValueTo: 1 alpha: true];
+    _giftShakeLab.backgroundColor = UIColor.clearColor;
+    NSNumberFormatter *formatter = [[NSNumberFormatter alloc] init];
+    formatter.numberStyle = kCFNumberFormatterDecimalStyle;
+    _giftShakeLab.formatBlock = ^NSString* (CGFloat value)
+    {
+        NSString* formatted = [formatter stringFromNumber:@((int)value)];
+        return [NSString stringWithFormat:@"x%@",formatted];
+    };
+    _giftShakeLab.font = [UIFont fontWithName:@"BakbakOne-Regular" size:35];//BakbakOne BakbakOne-Regular
+    _giftShakeLab.textColor = UIColor.clearColor;
+    [self applyTextStrokeToLabel:_giftShakeLab withStrokeColor:[UIColor colorWithHexString:@"#FFFFFF"]];
+    
+    [_sendGiftCountView addSubview: _giftShakeLab];
     
     //中奖视图
     [self addSubview:_giftHaveView];
     [_giftHaveView addSubview:_giftRotateImage];
     [_giftHaveView addSubview:_giftHaveImage];
     [_giftHaveView addSubview:_giftHaveMultipleLabel];
+    [self bringSubviewToFront:_sendGiftCountView];
+}
+
+
+//描边
+- (void)applyTextStrokeToLabel:(UILabel *)label withStrokeColor:(UIColor *)strokeColor {
+    if (label.text == nil) return;
+
+    NSAttributedString *attributedText = [[NSAttributedString alloc] initWithString:label.text attributes:@{
+        NSFontAttributeName: label.font,
+        NSForegroundColorAttributeName: label.textColor,
+        NSStrokeColorAttributeName: strokeColor,
+        NSStrokeWidthAttributeName: @(-2.0)
+    }];
+
+    label.attributedText = attributedText;
 }
 
 - (void)senderHeadTapped:(UITapGestureRecognizer *)gesture {
@@ -325,13 +380,29 @@ static NSString *const kBreathAnimationName = @"BreathAnimationName";
     [_giftImageView sd_setImageWithURL:[NSURL URLWithString:_model.giftImage] placeholderImage:[UIImage imageNamed:@"pioer_feed_placehold"]];
     _giftHaveView.hidden = NO;
     if (_model.nowType != 1) { //礼物类型 1幸运礼物 0礼物其他
-        _bgImageView.image = [UIImage imageNamed:@"icon_ChatS_JPGiftAnimationBgImg"];
         _giftHaveMultipleLabel.hidden = YES;
         _giftRotateImage.hidden = YES;
         [self removeTransFormAnimation:_giftRotateImage];
         _giftHaveImage.hidden = YES;
-    } else {
-        _bgImageView.image = [UIImage imageNamed:@"icon_ChatS_GiftAnimationBgImg"];
+    }
+    if (_model.show_style == 1) {
+        _bgImageView.image = [UIImage imageNamed:@"liveing_giftsQueue_one"];
+    } else if (_model.show_style == 2) {
+        _bgImageView.image = [UIImage imageNamed:@"liveing_giftsQueue_two"];
+    } else if (_model.show_style == 3) {
+        _bgImageView.image = [UIImage imageNamed:@"liveing_giftsQueue_three"];
+    } else if (_model.show_style == 4) {
+        NSString *path = [[NSBundle mainBundle] pathForResource:@"liveing_giftsQueue_four" ofType:@"webp"];
+        if (path) {
+            NSURL *url = [NSURL fileURLWithPath:path];
+            [_bgImageView sd_setImageWithURL:url];
+        }
+    } else if (_model.show_style == 5) {
+        NSString *path = [[NSBundle mainBundle] pathForResource:@"liveing_giftsQueue_five" ofType:@"webp"];
+        if (path) {
+            NSURL *url = [NSURL fileURLWithPath:path];
+            [_bgImageView sd_setImageWithURL:url];
+        }
     }
     // 非盲盒礼物
     if (model.winning_multiple > 0 && _model.nowType != 4) { //需要显示放大缩小
@@ -364,8 +435,6 @@ static NSString *const kBreathAnimationName = @"BreathAnimationName";
         }
         
         currentFrame.origin = CGPointMake(newX, newY);
-        //        NSLog(@"打印新坐标x =  %f", newX);
-        //        NSLog(@"打印新坐标y =  %f", newY);
         _giftHaveMultipleLabel.frame = currentFrame;
         [self layoutIfNeeded];
         if ([model.senderUserId isEqualToString:[[NSUserDefaults standardUserDefaults] stringForKey:@"PioerUserIdKey"]]) {
@@ -501,76 +570,4 @@ static NSString *const kBreathAnimationName = @"BreathAnimationName";
     }
     return _boxAudioPlayer;
 }
-
-
-//-(void)makeparabolaAnimation {
-//    UIImageView *babyView = [[UIImageView alloc] init];
-//    babyView.frame = CGRectMake(20, 0, 20, 20);
-//    babyView.image = [UIImage imageNamed: @"person_top_diamond"];
-//    [self addSubview: babyView];
-//    // 抛物线关键帧动画
-//    CAKeyframeAnimation *keyframeAnimation=[CAKeyframeAnimation animationWithKeyPath:@"position"];
-//    CGMutablePathRef path = CGPathCreateMutable();
-//    CGPathMoveToPoint(path, NULL, babyView.layer.position.x, babyView.layer.position.y);//移动到起始点
-//    NSLog(@"当前view x = %f 当前view y = %f", self.x, self.y);
-//    //(参数3,参数4)最高点;(参数5,参数6)中间点 (参数7,参数8)掉落最低点
-//    CGPathAddCurveToPoint(path, NULL, 50, _giftHaveView.bottom, 90, 120, [[UIScreen mainScreen] bounds].size.width - 30, [[UIScreen mainScreen] bounds].size.height - 30);
-//    keyframeAnimation.path = path;
-//    CGPathRelease(path);
-//    keyframeAnimation.duration = 1.0f;
-//    keyframeAnimation.removedOnCompletion = NO;//动画结束不返回原位置
-//    keyframeAnimation.fillMode = kCAFillModeForwards;
-//    [babyView.layer addAnimation:keyframeAnimation forKey:@"KCKeyframeAnimation_Position"];
-//}
-
-
-//playSVGA
-//-(void)playSVGA:(PioerdReceiveGiftData *)model{
-//
-//    if ([PioerDownGiftConfig isdownloadedGiftFile:model]) {
-//       NSDictionary *fileInfo  = [PioerDownGiftConfig getThisGiftInfo:model];
-//        PioerGiftDownloadData *downloadMode =  [PioerGiftDownloadData modelWithJSON:fileInfo];
-//        NSString * filePath = downloadMode.filePath;
-//        NSDate *filePathData = [[NSData alloc] initWithContentsOfFile:filePath];
-////       data
-//        [self.svgaparser parseWithData:filePathData cacheKey:downloadMode.fileName completionBlock:^(SVGAVideoEntity * _Nonnull videoItem) {
-//            self.svgaPlayer.videoItem = videoItem;
-//            [self.svgaPlayer startAnimation];
-//        } failureBlock:^(NSError * _Nonnull error) {
-//
-//        }];
-//
-//    }else{
-////url
-//        [self.svgaparser parseWithURL:[NSURL URLWithString: model.animEffectUrl] completionBlock:^(SVGAVideoEntity * _Nullable videoItem) {
-//            self.svgaPlayer.videoItem = videoItem;
-//            [self.svgaPlayer startAnimation];
-//        } failureBlock:^(NSError * _Nullable error) {
-//
-//        }];
-//    }
-//
-//
-//
-//}
-
-//MARK:-- SVGAPlayerDelegate
-//- (void)svgaPlayerDidFinishedAnimation:(SVGAPlayer *)player{
-//    //AULog(@"动画完成");
-//     [self hidePresendView];
-////     [self.svgaPlayer removeFromSuperview];
-//
-//
-//}
-//- (void)svgaPlayerDidAnimatedToFrame:(NSInteger)frame{
-//     //AULog(@"设置第几帧触发该方法");
-//    if (frame == 1) {
-//
-//    }
-//
-//}
-//- (void)svgaPlayerDidAnimatedToPercentage:(CGFloat)percentage{
-//     //AULog(@"播放百分比percentage = %f",percentage);
-//
-//}
 @end

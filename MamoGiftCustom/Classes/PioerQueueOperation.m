@@ -28,7 +28,7 @@
 
 + (instancetype)animOperationWithUserID:(NSString *)userID model:(PioerQueueGiftData *)model finishedBlock:(void(^)(BOOL result,NSInteger finishCount))finishedBlock; {
     PioerQueueOperation *op = [[PioerQueueOperation alloc] init];
-    op.presentView = [[PioerQueueView alloc] init];
+    op.presentView = [[PioerQueueView alloc] initWithModel: model];
     op.model = model;
     op.finishedBlock = finishedBlock;
     return op;

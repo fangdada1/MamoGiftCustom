@@ -86,7 +86,6 @@ static dispatch_once_t onceToken;
             op.giftBottom = giftBottom;
             // 注意：下面两句代码是和无用户礼物信息时不同的，其余的逻辑一样
             op.presentView.animCount = [[self.userGigtInfos objectForKey:userID] integerValue];
-//            op.model.giftCount = op.presentView.animCount + 1;
             if (op.model.giftCount>1) {
                 
             }else{
@@ -197,12 +196,6 @@ static dispatch_once_t onceToken;
             } else {
                 op.index = self.moreUserCount % 4;
             }
-//            NSLog(@"3当前moreUserCount = %d", self.moreUserCount);
-//            NSLog(@"3当前op.model.giftCount = %ld", (long)op.model.giftCount);
-            /*
-             2024-05-17 13:43:17.893553+0800 Pioer[1476:53259] 3当前moreUserCount = 0
-             2024-05-17 13:43:17.893840+0800 Pioer[1476:53259] 3当前op.model.giftCount = 50
-             */
             // 根据用户ID 控制显示的位置
             if (isMultipleRoom) { //多人房
                 if (self.moreUserCount % 3 == 0) {
@@ -290,7 +283,6 @@ static dispatch_once_t onceToken;
             op.giftBottom = giftBottom;
             // 注意：下面两句代码是和无用户礼物信息时不同的，其余的逻辑一样
             op.presentView.animCount = [[self.userGigtInfos objectForKey:userID] integerValue];
-//            op.model.giftCount = op.presentView.animCount + 1;
             if (op.model.giftCount>1) {
                 
             }else{
