@@ -132,8 +132,9 @@ static NSString *const kBreathAnimationName = @"BreathAnimationName";
     self.frame = _originFrame;
     self.alpha = 1;
     self.animCount = 0;
-//    [self.giftShakeLab changeToNumber:@0 animated: false];
+    [self removeTransFormAnimation: self.giftRotateImage];
     [self.giftShakeLab countFromZeroTo: 0 alpha:false];
+    
 }
 
 //MARK:--初始化方法
@@ -197,8 +198,7 @@ static NSString *const kBreathAnimationName = @"BreathAnimationName";
     _giftHaveImage.frame = CGRectMake(0, 0, 78, 78);
     
     _giftRotateImage.frame = CGRectMake(0, 0, 78, 78);
-    _giftRotateImage.hidden = YES;
-    [self removeTransFormAnimation:_giftRotateImage];
+    
     _giftHaveMultipleLabel.frame = CGRectMake(0, 48, 78, 20);
     _giftHaveMultipleLabel.textAlignment = NSTextAlignmentCenter;
     
@@ -304,7 +304,7 @@ static NSString *const kBreathAnimationName = @"BreathAnimationName";
     [_giftShakeLab countFromCurrentValueTo: 1 alpha: true];
     _giftShakeLab.backgroundColor = UIColor.clearColor;
     NSNumberFormatter *formatter = [[NSNumberFormatter alloc] init];
-    formatter.numberStyle = kCFNumberFormatterDecimalStyle;
+    formatter.numberStyle = kCFNumberFormatterNoStyle;//kCFNumberFormatterDecimalStyle; kCFNumberFormatterNoStyle
     _giftShakeLab.formatBlock = ^NSString* (CGFloat value)
     {
         NSString* formatted = [formatter stringFromNumber:@((int)value)];
@@ -409,34 +409,25 @@ static NSString *const kBreathAnimationName = @"BreathAnimationName";
         _giftHaveMultipleLabel.hidden = NO;
         _giftRotateImage.hidden = NO;
         _giftHaveImage.hidden = NO;
-        CGRect currentFrame = _giftHaveMultipleLabel.frame;
         
-        CGFloat newX = currentFrame.origin.x;
-        CGFloat newY = 48;
-        //        NSLog(@"当前送礼的show_type=%d model.winning_multiple=%d",model.show_type, model.winning_multiple);
         if (model.show_type == 2) { //show_type; //2 - 250 3 - 500  其他100  动画效果
             _giftHaveMultipleLabel.text = [NSString stringWithFormat:@"x%d", model.winning_multiple]; //@"x250";
-            newY = 48;
             _giftHaveImage.image = [UIImage imageNamed:@"live_gift_gain_250"];
             _giftRotateImage.hidden = NO;
             [self startTransFormAnimation:_giftRotateImage];
         } else if (model.show_type == 3) {
             _giftHaveMultipleLabel.text = [NSString stringWithFormat:@"x%d", model.winning_multiple];//@"x500";
-            newY = 48;
             _giftHaveImage.image = [UIImage imageNamed:@"live_gift_gain_500"];
             _giftRotateImage.hidden = NO;
             [self startTransFormAnimation:_giftRotateImage];
         } else {
+            _giftHaveMultipleLabel.text = [NSString stringWithFormat:@"x%d", model.winning_multiple];
+            _giftHaveImage.image = [UIImage imageNamed:@"live_gift_gain_100"];
             _giftRotateImage.hidden = YES;
             [self removeTransFormAnimation:_giftRotateImage];
-            _giftHaveMultipleLabel.text = [NSString stringWithFormat:@"x%d", model.winning_multiple];
-            newY = 48;
-            _giftHaveImage.image = [UIImage imageNamed:@"live_gift_gain_100"];
         }
+        [self giftHaveViewStartAnimation];
         
-        currentFrame.origin = CGPointMake(newX, newY);
-        _giftHaveMultipleLabel.frame = currentFrame;
-        [self layoutIfNeeded];
         if ([model.senderUserId isEqualToString:[[NSUserDefaults standardUserDefaults] stringForKey:@"PioerUserIdKey"]]) {
             if (model.isAnchorSend != 1) {
                 BOOL nowRewards = [[NSUserDefaults standardUserDefaults] boolForKey:@"PioerLivingStopRewards"];
@@ -479,7 +470,30 @@ static NSString *const kBreathAnimationName = @"BreathAnimationName";
     
 }
 
+// 中奖视图动画
+- (void)giftHaveViewStartAnimation {
+    // 创建放大动画
+     CABasicAnimation *scaleUp = [CABasicAnimation animationWithKeyPath:@"transform.scale"];
+     scaleUp.fromValue = @(1.0);
+     scaleUp.toValue = @(1.2);
+     scaleUp.duration = 0.1;
+     scaleUp.autoreverses = NO;
+     
+     // 创建重复动画
+     CAAnimationGroup *animationGroup = [CAAnimationGroup animation];
+     animationGroup.animations = @[scaleUp];
+     animationGroup.duration = 0.1;
+     animationGroup.repeatCount = 1;
+     
+     // 将动画添加到图层
+     [self.giftHaveView.layer addAnimation:animationGroup forKey:@"giftHaveViewPulsing"];
+}
+
+// 礼物图片重复动画
 - (void)startPulsingAnimation {
+    if ([self.giftImageView.layer animationForKey:@"pulsing"]) {//已存在
+        return;
+    }
     // 创建放大动画
      CABasicAnimation *scaleUp = [CABasicAnimation animationWithKeyPath:@"transform.scale"];
      scaleUp.fromValue = @(1.0);
@@ -497,31 +511,12 @@ static NSString *const kBreathAnimationName = @"BreathAnimationName";
      [self.giftImageView.layer addAnimation:animationGroup forKey:@"pulsing"];
 }
 
-- (void)addBreathAnimation
-{
-    CALayer *layer = [CALayer layer];
-    layer.position = CGPointMake(_giftHaveView.width/2.0f, _giftHaveView.width/2.0f);
-    layer.bounds = CGRectMake(0, 0, _giftHaveView.width/2.0f, _giftHaveView.width/2.0f);
-    layer.backgroundColor = [UIColor clearColor].CGColor;
-    layer.contents = _giftHaveView;
-    layer.contentsGravity = kCAGravityResizeAspect;
-    [self.layer addSublayer:layer];
-    
-    CAKeyframeAnimation *animation = [CAKeyframeAnimation animationWithKeyPath:@"transform.scale"];
-    animation.values = @[@1.f, @1.4f, @1.f];
-    animation.keyTimes = @[@0.f, @0.5f, @1.f];
-    animation.duration = 1; //1000ms
-    animation.repeatCount = FLT_MAX;
-    animation.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut];
-    [animation setValue:kBreathAnimationKey forKey:kBreathAnimationName];
-    [layer addAnimation:animation forKey:kBreathAnimationKey];
-    
-}
-/// 开始动画
+/// 背景金光开始动画
 - (void)startTransFormAnimation:(UIImageView *)view {
-    [self removeTransFormAnimation:view];
+    if ([view.layer animationForKey:@"animation"]) {//已存在
+        return;
+    }
     CABasicAnimation *animation = [CABasicAnimation animationWithKeyPath:@"transform.rotation.z"];//rotation.z
-    //默认是顺时针效果，若将fromValue和toValue的值互换，则为逆时针效果
     animation.toValue =   [NSNumber numberWithFloat: M_PI *2];
     animation.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionLinear];
     animation.duration = 2;
@@ -529,13 +524,16 @@ static NSString *const kBreathAnimationName = @"BreathAnimationName";
     animation.cumulative = NO;
     animation.removedOnCompletion = NO;
     animation.fillMode = kCAFillModeForwards;
-    animation.repeatCount = FLT_MAX; //如果这里想设置成一直自旋转，可以设置为FLT_MAX，
+    animation.repeatCount = FLT_MAX;
     [view.layer addAnimation:animation forKey:@"animation"];
     [view startAnimating];
 }
+
 /// 移除动画
 - (void)removeTransFormAnimation:(UIImageView *)view {
-    [view.layer removeAllAnimations];
+    if ([view.layer animationForKey:@"animation"]) {//已存在
+        [view.layer removeAllAnimations];
+    }
 }
 
 /** 设置缩放动画 */
